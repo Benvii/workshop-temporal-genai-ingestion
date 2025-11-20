@@ -180,11 +180,19 @@ def render_search_page(vector_store: PGVector):
                 rows.append(
                     {
                         "Rank": i,
-                        "Extrait": (doc.page_content or "")[:200] + ("..." if len(doc.page_content or "") > 200 else ""),
+                        "Titre": (doc.metadata or {}).get("title", ""),
+                        "URL": (doc.metadata or {}).get("source", ""),
+                        "Contenu": doc.page_content or "",
                         "Metadata": str(doc.metadata or {}),
                     }
                 )
-            st.dataframe(rows, use_container_width=True)
+            st.dataframe(
+                rows,
+                use_container_width=True,
+                column_config={
+                    "URL": st.column_config.LinkColumn("URL", display_text="Ouvrir l'article")
+                },
+            )
     else:
         # Rien saisi → on affiche le nombre total de documents
         total_docs = get_total_docs()
