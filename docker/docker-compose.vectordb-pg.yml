@@ -1,0 +1,24 @@
+# Init Postgres with PGVector
+
+services:
+  pgvector_postgres:
+    hostname: 127.0.0.1
+    image: pgvector/pgvector:pg17
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=ChangeMe
+    volumes:
+      - pgvector-postgres-vl:/var/lib/postgresql/data
+      - ./scripts/pgvector/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      pgvector-postgres-net:
+
+volumes:
+  pgvector-postgres-vl:
+    driver: local
+
+networks:
+  pgvector-postgres-net:
