@@ -276,9 +276,27 @@ def render_chat_page(rag_chain):
 
             with st.expander("📚 Sources utilisées"):
                 for i, doc in enumerate(source_docs, start=1):
-                    st.markdown(f"**Source {i}**")
-                    st.write((doc.page_content or "")[:500] + "...")
-                    st.json(doc.metadata or {})
+                    metadata = doc.metadata or {}
+                    title = metadata.get("title") or f"Source {i}"
+                    url = metadata.get("source")
+
+                    st.markdown(f"### {title}")
+                    if url:
+                        st.markdown(f"[🔗 Ouvrir l'article]({url})")
+
+                    st.markdown("**Extrait du contenu :**")
+                    excerpt = (doc.page_content or "")
+                    if len(excerpt) > 500:
+                        excerpt = excerpt[:500] + "..."
+                    st.write(excerpt)
+
+                    with st.expander("Voir tout le contenu"):
+                        st.write(doc.page_content)
+
+                    with st.expander("Voir les métadonnées brutes"):
+                        st.json(metadata)
+
+                    st.markdown("---")
 
         st.session_state.messages.append({"role": "assistant", "content": answer})
 
