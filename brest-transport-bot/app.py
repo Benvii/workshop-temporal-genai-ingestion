@@ -2,6 +2,8 @@
 # https://docs.streamlit.io/develop/tutorials/chat-and-llm-apps/build-conversational-apps
 import os
 import logging
+from typing import Optional
+
 import requests
 
 import streamlit as st
@@ -14,6 +16,9 @@ from langchain_postgres import PGVector
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
+
+from langfuse import Langfuse, get_client
+from langfuse.langchain import CallbackHandler
 
 # Load .env file if present
 from dotenv import load_dotenv, find_dotenv
@@ -132,6 +137,20 @@ def make_rag_chain(model: ChatOpenAI, retriever, rag_prompt: ChatPromptTemplate 
     )
 
     return rag_chain
+
+def create_langfuse_callback() -> Optional[CallbackHandler]:
+    ENABLE_LANGFUSE = os.getenv("BOT_ENABLE_LANGFUSE", "false").lower() in ("1", "true", "yes")
+
+    if ENABLE_LANGFUSE:
+        Langfuse(
+            public_key=os.getenv("LANGFUSE_INIT_PROJECT_PUBLIC_KEY"),
+            secret_key=os.getenv("LANGFUSE_INIT_PROJECT_SECRET_KEY"),
+            host=os.getenv("LANGFUSE_BASE_URL", "http://localhost:3000"),  # modifiable
+        )
+
+        return CallbackHandler(public_key=os.getenv("LANGFUSE_INIT_PROJECT_PUBLIC_KEY"))
+
+    return None
 
 def get_total_docs() -> int:
     """
@@ -256,6 +275,7 @@ def render_add_document_page(vector_store: PGVector):
         with st.expander("Aperçu du contenu récupéré"):
             st.text(content[:2000])
 
+
 def render_chat_page(rag_chain):
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -269,15 +289,32 @@ def render_chat_page(rag_chain):
         with st.chat_message("user"):
             st.markdown(prompt)
 
+        # Prépare éventuellement le callback Langfuse
+        callback = create_langfuse_callback()
+        trace_url: Optional[str] = None
+
         with st.chat_message("assistant"):
-            # Appel RAG
-            result = rag_chain.invoke(prompt)
+            # Appel RAG avec ou sans Langfuse selon la config
+            if callback is not None:
+                result = rag_chain.invoke(prompt, config={"callbacks": [callback]})
+                try:
+                    client = get_client()
+                    if getattr(callback, "last_trace_id", None):
+                        trace_url = client.get_trace_url(trace_id=callback.last_trace_id)
+                except Exception:
+                    trace_url = None
+            else:
+                result = rag_chain.invoke(prompt)
+
             answer = result["answer"]
             source_docs = result["source_documents"]
 
             st.markdown(answer)
 
-            with st.expander("📚 Sources utilisées"):
+            with st.expander("📚 Sources utilisées & Trace"):
+                if trace_url:
+                    st.markdown(f"[🧪 Voir la trace Langfuse]({trace_url})")
+
                 for i, doc in enumerate(source_docs, start=1):
                     metadata = doc.metadata or {}
                     title = metadata.get("title") or f"Source {i}"

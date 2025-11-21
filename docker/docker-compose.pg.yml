@@ -11,9 +11,9 @@ services:
       - workshop-temporal-genai-ingestion-net
     healthcheck:
       test: ["CMD-SHELL", "[ -f /var/lib/postgresql/data/db_init_completed ] && pg_isready -U postgres"]
-      interval: 5s
-      timeout: 20s
-      retries: 15
+      interval: 2s
+      timeout: 2s
+      retries: 100
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres

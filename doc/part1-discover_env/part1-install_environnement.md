@@ -24,7 +24,7 @@ Lancement de la stack docker :
 cd $(git rev-parse --show-toplevel)/docker
 cp template.env .env
 chmod a+r scripts/postgres/init.sql
-docker compose -f docker-compose.langfuse.yml -f docker-compose.pg.yml up -
+docker compose --env-file ../.env -f docker-compose.langfuse.yml -f docker-compose.pg.yml up -d
 ```
 
 ## Découvrir AvelBot

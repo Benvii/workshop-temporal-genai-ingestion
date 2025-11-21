@@ -6,3 +6,4 @@ members = [
 # (optional) force a single shared venv at root
 [tool.uv]
 managed = true
+package = true
