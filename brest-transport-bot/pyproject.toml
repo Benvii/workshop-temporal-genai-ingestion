@@ -11,6 +11,11 @@ dependencies = [
     "langchain-postgres>=0.0.16",
     "openai>=2.8.1",
     "psycopg[binary]>=3.2.12",
+    "python-dotenv>=1.2.1",
     "requests>=2.32.5",
     "streamlit>=1.51.0",
 ]
+
+[project.scripts]
+# So you can do: `uv run bot`
+bot = "brest_transport_bot.cli:main"

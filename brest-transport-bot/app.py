@@ -4,7 +4,6 @@ import os
 import logging
 import requests
 
-from openai import OpenAI
 import streamlit as st
 
 from sqlalchemy import create_engine, text
@@ -16,6 +15,10 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
 
+# Load .env file if present
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
 
 def create_embedding() -> OpenAIEmbeddings:
     embedding_openai_model = os.getenv("EMBEDDING_OPENAI_MODEL", "text-embedding-3-small")

@@ -1,0 +1,30 @@
+# Init Postgres with PGVector
+
+services:
+
+  # Vector Database
+  postgres:
+    image: pgvector/pgvector:pg17
+    ports:
+      - 5432:5432
+    networks:
+      - workshop-temporal-genai-ingestion-net
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /var/lib/postgresql/data/db_init_completed ] && pg_isready -U postgres"]
+      interval: 5s
+      timeout: 20s
+      retries: 15
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=ChangeMe
+    volumes:
+      - pgvector-postgres-vl:/var/lib/postgresql/data
+      - ./scripts/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pgvector-postgres-vl:
+    driver: local
+
+networks:
+  workshop-temporal-genai-ingestion-net:

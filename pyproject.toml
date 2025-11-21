@@ -1,0 +1,8 @@
+[tool.uv.workspace]
+members = [
+  "brest-transport-bot",
+]
+
+# (optional) force a single shared venv at root
+[tool.uv]
+managed = true
