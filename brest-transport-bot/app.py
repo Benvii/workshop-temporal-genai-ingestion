@@ -311,9 +311,10 @@ def render_chat_page(rag_chain):
 
             st.markdown(answer)
 
+            if trace_url:
+                st.markdown(f"[🧪 Voir la trace Langfuse]({trace_url})")
+
             with st.expander("📚 Sources utilisées & Trace"):
-                if trace_url:
-                    st.markdown(f"[🧪 Voir la trace Langfuse]({trace_url})")
 
                 for i, doc in enumerate(source_docs, start=1):
                     metadata = doc.metadata or {}
