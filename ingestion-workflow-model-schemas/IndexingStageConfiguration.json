@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IndexingStageConfiguration",
+  "description": "Configration de stage d'embedding / vectorisation.",
+  "type": "object",
+  "properties": {
+    "collection_name": {
+      "description": "Nom de la collection dans laquelle les documents sont enregistrés.",
+      "type": "string"
+    },
+    "database_uri": {
+      "description": "URI de la base PG Vector",
+      "type": "string"
+    },
+    "openai_embedding_model": {
+      "description": "Nom du modèle OpenAI utilisé",
+      "type": "string"
+    }
+  },
+  "required": ["database_uri", "openai_embedding_model", "collection_name"]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "uri": "https://brest.fr/actualites/palaren-un-belvedere-sur-rade-en-preparation",
+    "mime_type": "text/html",
+    "current_stage": "SCRAPING",
+    "current_status": "COMPLETED",
+    "error": null,
+    "raw_file_path": "ingestion-workflow-py/ressources/brest_transport_pre_scraped_pages/palaren-un-belvedere-sur-rade-en-preparation.html",
+    "converted_md_path": null,
+    "metadata": {
+      "title": "A Palaren, un belvédère sur rade en préparation | Brest métropole"
+    }
+  },
+  {
+    "uri": "https://brest.fr/actualites/debut-des-travaux-pour-les-ascenseurs-inclines-du-chu",
+    "mime_type": "text/html",
+    "current_stage": "SCRAPING",
+    "current_status": "COMPLETED",
+    "error": null,
+    "raw_file_path": "ingestion-workflow-py/ressources/brest_transport_pre_scraped_pages/debut-des-travaux-pour-les-ascenseurs-inclines-du-chu.html",
+    "converted_md_path": null,
+    "metadata": {
+      "title": "Début des travaux pour les ascenseurs inclinés du CHU | Brest métropole"
+    }
+  }
+]

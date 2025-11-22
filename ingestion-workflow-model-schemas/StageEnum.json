@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "StageEnum",
+  "description": "Liste des stage existant dans le workflow.",
+  "type": "string",
+  "enum": [
+    "CRAWLING",
+    "SCRAPING",
+    "CONVERTION",
+    "CHUNKING",
+    "INDEXING"
+  ]
+}

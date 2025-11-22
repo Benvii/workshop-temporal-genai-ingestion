@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IngestionWorkflowInput",
+  "description": "Payload d'entrée du workflow",
+  "type": "object",
+  "properties": {
+    "sources": {
+      "description": "Liste des pages web d'entrée",
+      "type": "array",
+      "items": {
+        "$ref": "Source.json"
+      }
+    },
+    "indexing_config": {
+      "$ref": "IndexingStageConfiguration.json"
+    }
+  },
+  "required": ["sources"]
+}

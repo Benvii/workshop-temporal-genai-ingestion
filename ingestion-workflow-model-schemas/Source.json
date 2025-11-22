@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Source",
+  "description": "Chaque page web est une source.",
+  "type": "object",
+  "properties": {
+    "uri": {
+      "description": "Source URI, URL de la page web",
+      "type": "string",
+      "minLength": 7
+    },
+    "mime_type": {
+      "$ref": "MimeTypesEnum.json",
+      "default": null
+    },
+    "max_depth": {
+      "description": "Maximum depth to crawl for this source",
+      "type": "integer",
+      "default": 0
+    },
+    "error": {
+      "type": "string"
+    },
+    "raw_file_path": {
+      "description": "Raw source file path, HTML scraped pages.",
+      "type": "string",
+      "default": null
+    },
+    "converted_md_path": {
+      "description": "Chemin vers le fichier MD issue de la conversion de la page web.",
+      "type": "string",
+      "default": null
+    },
+    "chunking_file_path": {
+      "description": "Path to the chunking output yaml file.",
+      "type": "string",
+      "default": null
+    },
+    "parent_uri": {
+      "description": "URL de la page parent.",
+      "type": "string",
+      "default": null
+    },
+    "current_stage": {
+      "$ref": "StageEnum.json",
+      "default": null
+    },
+
+    "metadata": {
+      "description": "Metadata of the source",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": ["uri"]
+}

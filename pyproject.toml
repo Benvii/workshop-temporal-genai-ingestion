@@ -1,9 +1,13 @@
 [tool.uv.workspace]
 members = [
   "brest-transport-bot",
+  "ingestion-workflow-py"
 ]
 
 # (optional) force a single shared venv at root
 [tool.uv]
 managed = true
 package = true
+
+[tool.uv.sources]
+ingestion-workflow = { workspace = true}

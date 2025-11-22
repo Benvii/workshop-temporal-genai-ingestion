@@ -20,10 +20,7 @@ TODO, quel réseau au Toten ?
 
 * Introduction rapide à Temporal IO
   * Mon premier workflow et activité hello world en python
-  * Ajoutons une activité TypeScript
-  * Explication sur l'échange de données entre les 2 :
-    * Dossier de travail / bucket
-    * Limitation event history et taille de payload d'entrée / sortie d'activités Temporal ==> Concept de Continue As New (exemple rapide comité)
+  * Indexing des pages web dans notre bot (en brute HTML)
 
 ### Part 2 - Collect de données, scriptons un peu [Python OU TypeScript]
 

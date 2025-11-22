@@ -29,4 +29,13 @@ docker compose --env-file ../.env -f docker-compose.langfuse.yml -f docker-compo
 
 ## Découvrir AvelBot
 
-## 
+```bash
+cd $(git rev-parse --show-toplevel)/
+streamlit run brest-transport-bot/app.py
+```
+
+TODO détailler les différentes fonctions de l'application.
+
+## Langfuse outil d'observabilité
+
+TODO, URL + donner les credentials par défaut.
