@@ -1,5 +1,8 @@
 import argparse
 import asyncio
+import os
+from datetime import timedelta
+
 import yaml
 import uuid
 
@@ -10,6 +13,10 @@ from avelbot_ingestion.helpers.logging_config import get_app_logger, configure_l
 from avelbot_ingestion.models.IngestionWorkflowInput import IngestionWorkflowInput
 
 logger = get_app_logger(__name__)
+
+# Adjust timeouts for debug (if you put breakpoints)
+WORKFLOW_TASK_TIMEOUT=int(os.environ.get("WORKFLOW_TASK_TIMEOUT", 300)) # 300ms, 5min
+WORKFLOW_RUN_TIMEOUT=int(os.environ.get("WORKFLOW_RUN_TIMEOUT", 300))
 
 def load_workflow_input_from_yaml(yaml_path: str) -> IngestionWorkflowInput:
     # Load YAML file
@@ -42,6 +49,8 @@ async def main():
         args=[workflow_input],
         task_queue="PY_WORKER_TASK_QUEUE",
         id=workflow_id,
+        run_timeout=timedelta(seconds=WORKFLOW_RUN_TIMEOUT),
+        task_timeout=timedelta(seconds=WORKFLOW_TASK_TIMEOUT)
     )
 
     logger.info("Workflow finished with the following result : %r", result)
