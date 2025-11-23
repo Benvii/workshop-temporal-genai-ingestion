@@ -8,7 +8,7 @@ from avelbot_ingestion.models.Source import Source
 logger = get_app_logger(__name__)
 
 @activity.defn(name="PY-PRINT-SOURCE-ACTIVITY")
-async def print_source_activity(source: Source):
+async def print_source_activity(source: Source) -> Source:
     """
     Activitée d'exemple super basique qui affiche une source.
 
@@ -16,3 +16,5 @@ async def print_source_activity(source: Source):
     """
     logger.info(" ---- Printing source %s ----", source.uri)
     logger.info(" %r ", source)
+
+    return  source
