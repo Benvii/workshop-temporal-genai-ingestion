@@ -1,0 +1,37 @@
+# Données d'entrée pour la partie 2.
+# - Avec 2 articles pré-téléchargés.
+# - Pour une ingestion brute directement en base.
+
+indexing_config: # Configuration transmise à l'activité d'indexation
+  collection_name: brest_transport # Nom de la collection par défaut utilisé par AvelBot / app.py
+  database_uri: postgresql+psycopg://postgres:ChangeMe@localhost:5432/postgres # Base Postgres utilisée par AvelBot
+  openai_embedding_model: text-embedding-3-small # Model d'embedding devant correspondre à celui utilisé par AvelBot
+
+
+# Listes des pages web pré-téléchargées avec leur emplacement relatif au root du repository.
+sources:
+# ----- Article : A Palaren, un belvédère sur rade en préparation | Brest métropole -----
+- uri: https://brest.fr/actualites/palaren-un-belvedere-sur-rade-en-preparation
+  mime_type: text/html
+
+  # La page étant déjà téléchargée, on la positionne au stage SCRAPING, finalisée COMPLETED.
+  current_stage: SCRAPING
+  current_status: COMPLETED
+
+  error:
+  raw_file_path: avelbot-ingestion-py/ressources/brest_transport_pre_scraped_pages/palaren-un-belvedere-sur-rade-en-preparation.html
+  converted_md_path:
+  metadata:
+    # On pré-rempli la métadata title avec le titre de la page
+    title: A Palaren, un belvédère sur rade en préparation | Brest métropole
+
+# ----- Article : Début des travaux pour les ascenseurs inclinés du CHU | Brest métropole -----
+- uri: https://brest.fr/actualites/debut-des-travaux-pour-les-ascenseurs-inclines-du-chu
+  mime_type: text/html
+  current_stage: SCRAPING
+  current_status: COMPLETED
+  error:
+  raw_file_path: avelbot-ingestion-py/ressources/brest_transport_pre_scraped_pages/debut-des-travaux-pour-les-ascenseurs-inclines-du-chu.html
+  converted_md_path:
+  metadata:
+    title: Début des travaux pour les ascenseurs inclinés du CHU | Brest métropole

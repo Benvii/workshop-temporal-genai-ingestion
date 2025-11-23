@@ -1,0 +1,118 @@
+# Temporal part of the stack
+
+services:
+
+  # -- Temporal --
+  temporal:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=ChangeMe
+      - POSTGRES_SEEDS=postgres
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - http_proxy=
+      - https_proxy=
+      - ALL_PROXY=
+      - all_proxy=
+      - NO_PROXY= "localhost,127.0.0.1,::1,temporal,postgres,temporal-ui,temporal-admin-tools,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+      - no_proxy= "localhost,127.0.0.1,::1,temporal,postgres,temporal-ui,temporal-admin-tools,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+      - GRPC_NO_PROXY= "localhost,127.0.0.1,temporal,postgres"
+      - USE_INTERNAL_FRONTEND=1
+      - SERVICES=frontend,history,matching,worker,internal-frontend
+
+    image: temporalio/auto-setup:${TEMPORAL_VERSION}
+    networks:
+      - temporal-network
+      - workshop-temporal-genai-ingestion-net
+    ports:
+      - 7233:7233
+      - 7236:7236
+    volumes:
+      - ./scripts/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+
+  temporal-init:
+    image: temporalio/admin-tools:${TEMPORAL_ADMINTOOLS_VERSION}
+    depends_on:
+      - temporal
+    networks:
+      - temporal-network
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7236 # Internal-frontend without auth
+      - TEMPORAL_CLI_ADDRESS=temporal:7236 # Internal-frontend without auth
+      - HTTP_PROXY=""
+      - http_proxy=""
+      - HTTPS_PROXY=""
+      - https_proxy=""
+      - NO_PROXY=temporal
+      - no_proxy=temporal
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for Temporal to be ready...';
+        until tctl cluster health | grep -q 'SERVING'; do
+          echo 'Temporal not ready yet...';
+          sleep 5;
+        done;
+        echo 'Temporal is up. Running initialization...';
+        temporal operator namespace create --namespace workshop-ingestion || echo 'Namespace already exists';
+        #temporal operator search-attribute create --name=AppBot --type=Text --namespace=workshop-ingestion || echo 'Search attribute AppBot already exists';
+        #temporal operator search-attribute create --name=AppNamespace --type=Text --namespace=workshop-ingestion || echo 'Search attribute AppNamespace already exists';
+        echo 'Initialization done.';
+      "
+
+  temporal-admin-tools:
+    depends_on:
+      - temporal
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
+      - NO_PROXY=temporal,localhost,127.0.0.1,::1
+      - no_proxy=temporal,localhost,127.0.0.1,::1
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - http_proxy=
+      - https_proxy=
+    image: temporalio/admin-tools:${TEMPORAL_ADMINTOOLS_VERSION}
+    networks:
+      - temporal-network
+    stdin_open: true
+    tty: true
+  temporal-ui:
+    depends_on:
+      temporal:
+        condition: service_started
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - http_proxy=
+      - https_proxy=
+      - ALL_PROXY=
+      - all_proxy=
+      - NO_PROXY= "localhost,127.0.0.1,::1,temporal,postgres,temporal-ui,temporal-admin-tools,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+      - no_proxy= "localhost,127.0.0.1,::1,temporal,postgres,temporal-ui,temporal-admin-tools,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+      - GRPC_NO_PROXY= "localhost,127.0.0.1,temporal,postgres"
+      # - TEMPORAL_AUTH_ENABLED=true
+    image: temporalio/ui:${TEMPORAL_UI_VERSION}
+    networks:
+      - temporal-network
+    ports:
+      # - 8088:8080
+      - 8233:8080
+
+networks:
+  temporal-network:
+    driver: bridge
+    name: temporal-network
+
+volumes:
+  temporal-postgres-vl:
+    driver: local

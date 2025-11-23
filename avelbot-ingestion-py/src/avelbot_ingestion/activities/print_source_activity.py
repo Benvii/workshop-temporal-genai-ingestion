@@ -1,9 +1,11 @@
 import logging
 
 from temporalio import activity
-from ingestion_workflow.models.Source import Source
 
-logger = logging.getLogger(__name__)
+from avelbot_ingestion.helpers.logging_config import get_app_logger
+from avelbot_ingestion.models.Source import Source
+
+logger = get_app_logger(__name__)
 
 @activity.defn(name="PY-PRINT-SOURCE-ACTIVITY")
 async def print_source_activity(source: Source):

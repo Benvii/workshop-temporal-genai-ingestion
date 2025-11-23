@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "[🐍] GENERATE PY MODELS from schema",
+      "type": "python",
+      "pythonPath": "${workspaceFolder}/.venv/bin/python",
+      "request": "launch",
+      "module": "datamodel_code_generator",
+      "args": [
+        "--input", "./ingestion-workflow-model-schemas",
+        "--input-file-type", "jsonschema",
+        "--disable-timestamp",
+        "--use-subclass-enum",
+        "--use-exact-imports",
+        "--output", "./avelbot-ingestion-py/src/avelbot_ingestion/models/"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      },
+      "cwd": "${workspaceFolder}/",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[🐍] Trigger - Part 2 - Indexing pages",
+      "type": "python",
+      "pythonPath": "${workspaceFolder}/.venv/bin/python",
+      "request": "launch",
+      "program": "${workspaceFolder}/avelbot-ingestion-py/src/avelbot_ingestion/runners/trigger_ingestion_workflow.py",
+      "args": [
+        "--workflow-input-yaml=part2-vect_pages_with_temporal.yml"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "LOGGING_ENV": "DEV",
+        "LOGGING_LEVEL": "DEBUG",
+        "TEMPORAL_LOGGING_LEVEL": "INFO"
+      },
+      "cwd": "${workspaceFolder}/avelbot-ingestion-py/ressources/workflow_inputs/",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[🐍] Main Worker",
+      "type": "debugpy",
+      "request": "launch",
+      "pythonPath": "${workspaceFolder}/.venv/bin/python",
+      "program": "${workspaceFolder}/avelbot-ingestion-py/src/avelbot_ingestion/worker/main_worker.py",
+      "args": [],
+      "env": {
+        "DEV_USE_UNSANDBOXED_WORKFLOW_RUNNER": "1"
+      },
+      "envFile": "${workspaceFolder}/.env",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

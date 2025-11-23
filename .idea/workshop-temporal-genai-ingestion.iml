@@ -2,7 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/ingestion-workflow-py/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/avelbot-ingestion-py/src" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.13 virtualenv at ~/Documents/Dev/workshop-temporal-genai-ingestion/.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
