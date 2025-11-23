@@ -8,12 +8,15 @@
       "request": "launch",
       "module": "datamodel_code_generator",
       "args": [
-        "--input", "./ingestion-workflow-model-schemas",
-        "--input-file-type", "jsonschema",
+        "--input",
+        "./ingestion-workflow-model-schemas",
+        "--input-file-type",
+        "jsonschema",
         "--disable-timestamp",
         "--use-subclass-enum",
         "--use-exact-imports",
-        "--output", "./avelbot-ingestion-py/src/avelbot_ingestion/models/"
+        "--output",
+        "./avelbot-ingestion-py/src/avelbot_ingestion/models/"
       ],
       "env": {
         "PYTHONUNBUFFERED": "1"
@@ -51,6 +54,30 @@
       },
       "envFile": "${workspaceFolder}/.env",
       "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[🔷] GENERATE TS MODELS",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "tsx",
+        "generate_model.ts"
+      ],
+      "cwd": "${workspaceFolder}/avelbot-ingestion-ts/src/",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[🔷] Worker TS",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${env:HOME}/.nvm/versions/node/v20.19.0/bin/npm",
+      "runtimeArgs": [
+        "run",
+        "startDefaultWorker.watch",
+      ],
+      "cwd": "${workspaceFolder}/avelbot-ingestion-ts/",
       "console": "integratedTerminal"
     }
   ]

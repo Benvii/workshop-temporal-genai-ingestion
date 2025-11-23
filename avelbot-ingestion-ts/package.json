@@ -1,0 +1,50 @@
+{
+  "name": "avelbot-ingestion-ts",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "startDefaultWorker": "ts-node src/run_worker.ts",
+    "startDefaultWorker.watch": "nodemon src/run_worker.ts"
+  },
+  "nodemonConfig": {
+    "execMap": {
+      "ts": "ts-node"
+    },
+    "ext": "ts"
+  },
+  "dependencies": {
+    "@temporalio/worker": "^1.11.7",
+    "@tsconfig/node18": "^18.2.4",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.13.14",
+    "@types/turndown": "^5.0.6",
+    "defuddle": "^0.6.6",
+    "jsdom": "^26.0.0",
+    "json-schema-to-typescript": "^15.0.4",
+    "ts-node": "^10.9.2",
+    "turndown": "^7.2.2",
+    "winston": "^3.17.0",
+    "yargs": "^17.7.2"
+  },
+  "overrides": {
+    "defuddle": {
+      "jsdom": "^26.0.0"
+    },
+    "jsdom": {
+      "nwsapi": "2.2.4"
+    }
+  },
+  "overridesComments": {
+    "jsdom": "Fixes a JSDOM case sensitivity prblm on tag names caused by a bug in some nwsapi versions (ex: node.querySelectorAll('SPAN') returns nothing). To be checked for correction in the future"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.33",
+    "nodemon": "^3.1.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.9.3"
+  },
+  "description": "```bash npm run startDefaultWorker -- --temporal-namespace=ns-01-bot-cmb  --worker-identity=py-default-worker-1 ```",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

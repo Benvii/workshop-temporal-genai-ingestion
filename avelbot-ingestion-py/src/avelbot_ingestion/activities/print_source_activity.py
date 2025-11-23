@@ -1,5 +1,3 @@
-import logging
-
 from temporalio import activity
 
 from avelbot_ingestion.helpers.logging_config import get_app_logger
@@ -7,7 +5,7 @@ from avelbot_ingestion.models.Source import Source
 
 logger = get_app_logger(__name__)
 
-@activity.defn(name="PY-PRINT-SOURCE-ACTIVITY")
+@activity.defn(name="PY-print_source_activity")
 async def print_source_activity(source: Source) -> Source:
     """
     Activitée d'exemple super basique qui affiche une source.

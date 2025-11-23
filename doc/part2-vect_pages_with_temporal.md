@@ -6,6 +6,29 @@
   * Découverte du modèle de données utilisé pendant le workshop
   * Coder et lancer l'activité d'indexation sur des pages web pré-téléchargées
 
+<!-- TOC -->
+* [Part 2 - Vectorisons quelques pages avec Temporal IO](#part-2---vectorisons-quelques-pages-avec-temporal-io)
+  * [Découverte de Temporal IO](#découverte-de-temporal-io)
+    * [Pourquoi le choix de Temporal IO](#pourquoi-le-choix-de-temporal-io)
+    * [Modèle de données qui serait utilisé](#modèle-de-données-qui-serait-utilisé)
+    * [Notre premier workflow](#notre-premier-workflow)
+    * [Notre premier worker](#notre-premier-worker)
+      * [Namespace et Task Queue](#namespace-et-task-queue)
+    * [Créons et lançons Main Worker](#créons-et-lançons-main-worker)
+    * [Lançons notre premier workflow](#lançons-notre-premier-workflow)
+    * [Input d'entrée](#input-dentrée)
+    * [Trigger le workflow via Temporal UI](#trigger-le-workflow-via-temporal-ui)
+    * [Trigger le workflow via une run configuration VS Code ou PyCharm](#trigger-le-workflow-via-une-run-configuration-vs-code-ou-pycharm)
+    * [En CLI](#en-cli)
+      * [Via PyCharm](#via-pycharm)
+      * [VS Code et debug](#vs-code-et-debug)
+  * [Indexons des pages pré-téléchargées](#indexons-des-pages-pré-téléchargées)
+    * [Compléter l'activité index_source_no_chunk_activity](#compléter-lactivité-index_source_no_chunk_activity)
+    * [Appeler l'activitée depuis le workflow](#appeler-lactivitée-depuis-le-workflow)
+    * [Indexons les pages](#indexons-les-pages)
+    * [Vérifions sur AvelBot](#vérifions-sur-avelbot)
+<!-- TOC -->
+
 ## Découverte de Temporal IO
 
 Temporal IO est une plateforme open-source de gestion de workflows distribués, conçue pour rendre les systèmes complexes
@@ -291,6 +314,163 @@ Vous pouvez ensuite lancer le workflow via les 2 run configuration suivantes :
 
 #### VS Code et debug
 
-Sur VS Code lancer la configuration `[🐍] Trigger - Part 2 - Indexing pages`.
+Sur VS Code lancer les configurations : 
+* Worker : `[🐍] Main Worker`
+* Déclencher le workflow : `[🐍] Trigger - Part 2 - Indexing pages`.
 
+## Indexons des pages pré-téléchargées
 
+Le workflow précédent ne fait qu'afficher dans la console du worker la liste des sources fournies en entrée,
+pour aller droit au but et voir du résultat rapidement dans notre application nous allons coder
+le stage d'indexation qui insert en base vectorielle le contenu brute (donc HTML) des 2 pages pré-téléchargés.
+
+On aura ainsi le workflow suivant :
+![](./images/workflow-pipeline-part2.excalidraw.png)
+
+### Compléter l'activité index_source_no_chunk_activity
+
+Ouvrir le fichier [index_source_no_chunk_activity.py](../avelbot-ingestion-py/src/avelbot_ingestion/activities/index_source_no_chunk_activity.py).
+
+L'objectif de cette activité est simple, basculer le contenu de la source avec laquelle est appelée en base vectorielle :
+* Création d'un Embedding Open AI, attention il faut bien utiliser le même modèle que l'application AvelBot, en va récupérer son nom depuis la configuration d'indexing passée en entrée du workflow.
+```python
+embedding = OpenAIEmbeddings(model=stage_config.openai_embedding_model)
+```
+* Création du VectorStore Postgres également avec les informations de configuration d'entrée du workflow :
+```python
+vector_store = PGVector(
+      connection=stage_config.database_uri,
+      collection_name=stage_config.collection_name,
+      embeddings=embedding,
+  )
+```
+* Lire le contenu du fichier HTML pré-téléchargé (via les Run Configuration PyCharm et VS Code le workder est exécuté avec comme dossier de context la racine de repo comme les paths indiqué dans les sources) :
+```python
+with open(file_path, "r", encoding="utf-8") as f:
+      content = f.read()
+```
+* Création d'un document avec le contenu et les bonnes métadata attendue par AvelBot (title et source) :
+```python
+doc = Document(
+        page_content=content,
+        metadata={
+            "source": source.uri,
+            "title": source.metadata.get("title"),
+        },
+    )
+```
+* Ajout à la base vectorielle :
+```python
+vector_store.add_documents([doc])
+```
+
+<details>
+  <summary>Code complet de `index_source_no_chunk_activity.py`</summary>
+
+```python
+from temporalio import activity
+
+from avelbot_ingestion.helpers.logging_config import get_app_logger
+from avelbot_ingestion.models.IndexingStageConfiguration import IndexingStageConfiguration
+from avelbot_ingestion.models.Source import Source
+
+from langchain_postgres import PGVector
+from langchain_openai import OpenAIEmbeddings
+from langchain_core.documents import Document
+
+logger = get_app_logger(__name__)
+
+@activity.defn(name="PY-index_source_no_chunk_activity")
+async def index_source_no_chunk_activity(source: Source, stage_config: IndexingStageConfiguration) -> Source:
+    """
+    Activitée d'indexation d'une source non chunkée en base vectorielle.
+
+    :param source: Source non chunkée à indexer en base vectorielle.
+    """
+    logger.info("Indexation de la source :", source.uri)
+
+    # COMPLETER ICI - START
+    # embedding = # Créer l'embedding
+    # vector_store = # Créer le vector store
+    # Lire le contenu de la page téléchargée présente à source.raw_file_path
+    # Créer un Document (langchain) :
+    # - avec le contenu comme page_content
+    # - en metadata "source" qui vaut source.uri
+    # En utilisant le vector_store ajouter le document créé.
+
+    logger.debug("Creating OpenAI embedding using model : %s", stage_config.openai_embedding_model)
+    embedding = OpenAIEmbeddings(model=stage_config.openai_embedding_model)
+    vector_store = PGVector(
+        connection=stage_config.database_uri,
+        collection_name=stage_config.collection_name,
+        embeddings=embedding,
+    )
+
+    with open(source.raw_file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    doc = Document(
+        page_content=content,
+        metadata={
+            "source": source.uri,
+            "title": source.metadata.get("title"),
+        },
+    )
+    vector_store.add_documents([doc])
+    # COMPLETER ICI - END
+
+    return  source
+
+```
+</details>
+
+### Appeler l'activitée depuis le workflow
+
+Maintenant nous pouvez appeler cette activité depuis le workflow, ouvrez [ingestion_workflow.py](../avelbot-ingestion-py/src/avelbot_ingestion/workflows/ingestion_workflow.py)
+et décommentez les lignes suivantes :
+```python
+# COMPLETER ICI / Décommenter ici - START (partie 2)
+# - Décommenter les lignes suivantes
+# - Compléter l'activitée index_source_no_chunk_activity
+indexing_tasks = [
+    workflow.execute_activity(
+        activity="PY-index_source_no_chunk_activity",
+        task_queue="PY_WORKER_TASK_QUEUE",
+        args=[source, ingestion_workflow_input.indexing_config], # Ne pas oublier de passer le paramètre supplémentaire ici
+        start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
+    )
+    for source in sources
+]
+sources = await asyncio.gather(*indexing_tasks)  # Exécute toutes les tâches en parallèle sur chaques sources
+logger.info("Nombre de sources indexés : %i", len(sources))
+# COMPLETER ICI - END
+```
+
+### Indexons les pages
+
+* Avant de relancer le workflow retourner sur AvelBot pour vider la base vectorielle.
+* Relancez votre worker Main Worker pour que les changements soient bien pris en comptes.
+* Puis relancer la worker (PyCharm: `Part 2 - Indexing workflow` - VSCode: `"[🐍] Trigger - Part 2 - Indexing pages"` ).
+
+Vous devriez avoir ce résultat dans Temporal :
+![](./images/part2-full-workflow-temporal-webui.png)
+
+### Vérifions sur AvelBot
+
+Retournez sur AvelBot pour vérifier que les documents sont bien en base :
+![](./images/part2-base-vect-resultat.png)
+
+Interroger le bot par exemple sur l'ascenseur urbain `Il y aura quoi au CHU ?` :
+![](./images/part2-reponse-bot-CHU.png)
+
+**🎉 Bravo vous avez fait votre première ingestion.**
+
+> On remarque que le temps de réponse est assez long 🤔, allez voir la trace langfuse par curiosité.
+> Regardez bien le dernier appel à OpenAI, son temps d'exécution et le nombre de token.
+![](./images/part2-langfuse-latency-openai-token-size.png)
+
+C'est la cata ! comme on a ingéré les pages brute le nombre de token explose et le temps d'excéution aussi.
+
+**Nous allons voir pour nettoyer les documents dans la partie suivante et garder uniquement le contenu utile**.
+
+Aller à la [Partie 3 : Clean les pages et les convertir en markdown (première activité TypeScript)](./part3-cleaning_pages_in_typescript.md)

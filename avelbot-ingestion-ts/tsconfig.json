@@ -1,0 +1,19 @@
+{
+    "extends": "@tsconfig/node18/tsconfig.json",
+    "version": "5.6.3",
+    "compilerOptions": {
+        "lib": [
+            "es2021",
+            "DOM"
+        ],
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "rootDir": "./src",
+        "outDir": "./lib",
+        "isolatedModules": true
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}
