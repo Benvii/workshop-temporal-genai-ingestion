@@ -45,6 +45,15 @@
       "$ref": "StageEnum.json",
       "default": null
     },
+    "current_status": {
+      "$ref": "SourceStatusEnum.json",
+      "default": null
+    },
+
+    "options": {
+      "$ref": "SourceOptions.json",
+      "default": null
+    },
 
     "metadata": {
       "description": "Metadata of the source",

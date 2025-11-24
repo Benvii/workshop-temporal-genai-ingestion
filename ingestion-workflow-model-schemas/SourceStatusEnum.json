@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "SourceStatusEnum",
+  "description": "Liste de status de traitement au sein d'un stage dans lesquels une source peut se trouver. Introduit au crawling.",
+  "type": "string",
+  "enum": [
+    "DISCOVERED",
+    "IN_PROGRESS",
+    "COMPLETED",
+    "ERROR"
+  ]
+}

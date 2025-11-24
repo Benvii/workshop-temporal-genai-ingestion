@@ -8,6 +8,8 @@ from typing import Dict, List, Optional, Union
 from pydantic import BaseModel, Field, constr
 
 from .MimeTypesEnum import MimeTypesEnum
+from .SourceOptions import SourceOptions
+from .SourceStatusEnum import SourceStatusEnum
 from .StageEnum import StageEnum
 
 
@@ -30,6 +32,8 @@ class Source(BaseModel):
     )
     parent_uri: Optional[str] = Field(None, description='URL de la page parent.')
     current_stage: Optional[StageEnum] = None
+    current_status: Optional[SourceStatusEnum] = None
+    options: Optional[SourceOptions] = None
     metadata: Optional[
         Dict[str, Union[str, bool, int, List[Union[str, bool, int]]]]
     ] = Field(None, description='Metadata of the source')

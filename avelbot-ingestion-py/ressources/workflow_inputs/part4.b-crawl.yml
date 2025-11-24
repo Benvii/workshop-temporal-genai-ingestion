@@ -1,0 +1,28 @@
+# Données d'entrée pour la partie 4.b
+# Crawling du site d'actu de Brest
+
+indexing_config: # Configuration transmise à l'activité d'indexation
+  collection_name: brest_transport # Nom de la collection par défaut utilisé par AvelBot / app.py
+  database_uri: postgresql+psycopg://postgres:ChangeMe@localhost:5432/postgres # Base Postgres utilisée par AvelBot
+  openai_embedding_model: text-embedding-3-small # Model d'embedding devant correspondre à celui utilisé par AvelBot
+
+
+# Point d'entrée utilisé pour démarrer le crawling
+sources:
+# ----- Filtre : Page actu -----
+- uri: https://brest.fr/nos-actualites?category%5B927%5D=927&commune=&quartier=&query=
+  max_depth: 2 # 2 niveaux de pages filles
+  options:
+    crawling_url_startswith: # Filtre les URLs crawlé partant de cette source
+      - https://brest.fr/actualites/
+      #- https://brest.fr/nos-actualites
+
+  mime_type: # Sera déterminé par le crawler
+
+  current_stage:
+  current_status:
+
+  error:
+  raw_file_path:
+  converted_md_path:
+  metadata:

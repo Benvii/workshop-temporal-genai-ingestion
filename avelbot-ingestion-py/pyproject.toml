@@ -17,6 +17,7 @@ dependencies = [
     "langchain-postgres>=0.0.16",
     "openai>=2.8.1",
     "psycopg[binary]>=3.2.12",
+    "cel-python>=0.4.0",
 ]
 
 [build-system]
