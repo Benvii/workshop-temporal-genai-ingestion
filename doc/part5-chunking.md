@@ -146,25 +146,23 @@ source.chunking_file_path = str(source_chunks_file_path)
 ```
 </details>
 
-⚠️ Bien penser à ajouter les 2 activités aux Main Worker dans [main_worker.py](../avelbot-ingestion-py/src/avelbot_ingestion/worker/main_worker.py) :
+### Appeler l'activitée depuis le workflow
+
+Cette activitée n'est pas appelée depuis le workflow pour l'instant, le code est déjà près il vous suffit de décommenter.
+
+Ouvrez le fichier [ingestion_workflow.py](../avelbot-ingestion-py/src/avelbot_ingestion/workflows/ingestion_workflow.py),
+décommentez la partie 5 :
 ```python
-worker: Worker = Worker(
-        client,
-        task_queue="PY_WORKER_TASK_QUEUE", # Nom de la file sur laquelle écoute le worker
-        workflows=[IngestionWorkflow], # Code des workflow qu'est capable d'exécuter le worker
-        activities=[print_source_activity, # Liste des activités qu'est capable d'exécuter le worker
-                    index_source_no_chunk_activity,
-                    scraping_activity,
-                    crawling_activity,
-                    recursive_text_chunking_source_activity, # Ajouté ici !!
-                    index_source_with_chunks_activity # Ajouté ici !!
-                    ],
-        debug_mode=True,
-        workflow_runner=build_sandbox_worker_runner_vscode_debug_compatible() # Used to prevent VS Code issue
-    )
+# COMPLETER ICI - START (partie 5)
+# Décommenter les lignes suivante
+sources = await recursive_text_chunking_stage(sources, ingestion_workflow_input.recursive_chunking_config)
+sources, err_sources = split_sources_by_error(sources)
+sources_with_errors.extend(err_sources)
+# Penser à changer l'activité d'indexing "index_source_no_chunk_activity" par "index_source_with_chunks_activity"
+# COMPLETER ICI - END (partie 5)
 ```
 
-### Replacement de l'activité d'indexation
+### Replacement de l'activité d'indexation dans le workflow
 
 Nous allons appeler une activitée d'indexation qui se base sur ce fichier de chunks pour avoir en base 1 document par chunk
 est plus 1 document avec le contenu complet de la source.
@@ -184,6 +182,26 @@ indexing_tasks = [
     )
     for source in sources
 ]
+```
+
+### Bien s'assurer que le worker gères ces activités
+
+⚠️ Bien penser à ajouter les 2 activités aux Main Worker dans [main_worker.py](../avelbot-ingestion-py/src/avelbot_ingestion/worker/main_worker.py) :
+```python
+worker: Worker = Worker(
+        client,
+        task_queue="PY_WORKER_TASK_QUEUE", # Nom de la file sur laquelle écoute le worker
+        workflows=[IngestionWorkflow], # Code des workflow qu'est capable d'exécuter le worker
+        activities=[print_source_activity, # Liste des activités qu'est capable d'exécuter le worker
+                    index_source_no_chunk_activity,
+                    scraping_activity,
+                    crawling_activity,
+                    recursive_text_chunking_source_activity, # Ajouté ici !!
+                    index_source_with_chunks_activity # Ajouté ici !!
+                    ],
+        debug_mode=True,
+        workflow_runner=build_sandbox_worker_runner_vscode_debug_compatible() # Used to prevent VS Code issue
+    )
 ```
 
 ### Lancer le workflow
