@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from temporalio import activity
 
@@ -17,12 +17,13 @@ from urllib.parse import urljoin, urldefrag
 logger = get_app_logger(__name__)
 
 @activity.defn(name="PY-crawling_activity")
-async def crawling_activity(source: Source, page_size: int) -> List[Source]:
+async def crawling_activity(source: Source, page_size: Optional[int] = None) -> List[Source]:
     """
     Crawl une source / page web de manière paginée.
 
     :param source: Source à télécharger.
     :param page_size: Nombre de sources max à retourner en plus de la source en cours d'exploration.
+        Si pas défini pas de page_size on récupère tous les liens.
     """
     logger.info(" ---- crawling_activity for %s ----", source.uri)
 

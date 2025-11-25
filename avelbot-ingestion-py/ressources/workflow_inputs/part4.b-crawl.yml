@@ -11,7 +11,7 @@ indexing_config: # Configuration transmise à l'activité d'indexation
 sources:
 # ----- Filtre : Page actu -----
 - uri: https://brest.fr/nos-actualites?category%5B927%5D=927&commune=&quartier=&query=
-  max_depth: 2 # 2 niveaux de pages filles
+  max_depth: 1 # 1 niveaux de pages filles
   options:
     crawling_url_startswith: # Filtre les URLs crawlé partant de cette source
       - https://brest.fr/actualites/
