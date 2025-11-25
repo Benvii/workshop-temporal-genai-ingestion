@@ -6,6 +6,22 @@
   * Adaptation de l’activité d’indexing pour qu'elle ingère le chunks générés.
   * Voir l'impact sur le prompt
 
+<!-- TOC -->
+* [Partie 5 - Éviter les prompts qui explosent, découpons nos documents - Chunking](#partie-5---éviter-les-prompts-qui-explosent-découpons-nos-documents---chunking)
+  * [Pourquoi chunker ? problématique et approches](#pourquoi-chunker--problématique-et-approches)
+    * [Recursive Character Text Splitting (approche “cascade” de LangChain)](#recursive-character-text-splitting-approche-cascade-de-langchain)
+    * [Chunking sémantique (Semantic similarity chunking)](#chunking-sémantique-semantic-similarity-chunking)
+    * [Dense X Retrieval (un exemple de chunking par LLM)](#dense-x-retrieval-un-exemple-de-chunking-par-llm)
+  * [Adaptation de l’activité d’indexing pour qu'elle ingère le chunks générés](#adaptation-de-lactivité-dindexing-pour-quelle-ingère-le-chunks-générés)
+    * [Modèle de données et stockage des chunks](#modèle-de-données-et-stockage-des-chunks)
+    * [Compléter l'activitée](#compléter-lactivitée)
+    * [Appeler l'activitée depuis le workflow](#appeler-lactivitée-depuis-le-workflow)
+    * [Replacement de l'activité d'indexation dans le workflow](#replacement-de-lactivité-dindexation-dans-le-workflow)
+    * [Bien s'assurer que le worker gères ces activités](#bien-sassurer-que-le-worker-gères-ces-activités)
+    * [Lancer le workflow](#lancer-le-workflow)
+  * [Voir l'impact sur le prompt](#voir-limpact-sur-le-prompt)
+<!-- TOC -->
+
 ## Pourquoi chunker ? problématique et approches
 
 <!-- Explication à l'oral -->

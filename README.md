@@ -1,39 +1,17 @@
 # Workshop : Alimenter la base de connaissance de ses applications Gen AI (chatbot RAG) de manière industrielle et automatisée
 
+![Illustration Workshop](./doc/images/illustratiion-workshop.jpeg)
+
 ## Info réseau
 
 TODO, quel réseau au Toten ?
 
 ## Sommaire
 
+* [Partie 1 - Découverte et installation de l'environment](./doc/part1-install_environnement.md)
+* [Partie 2 - Vectorisons quelques pages avec Temporal IO](./doc/part2-vect_pages_with_temporal.md)
+* [Partie 3 - Clean les pages et les convertir en markdown](./doc/part3-cleaning_pages_in_typescript.md)
+* !! [Partie 4 - Crawling et scraping des pages](./doc/part4-crawling_scraping.md) ==> RESTE DU TAFF SUR LE CRAWLING
+* [Partie 5 - Éviter les prompts qui explosent, découpons nos documents - Chunking](./doc/part5-chunking.md)
+* TODO ouverture partie 6, ouverture vers Qallam et usage avancés (Continue As New...)
 
-### Part 1 - Découverte de notre environment
-
-* Architecture et setup de l'environnement
-  * Configurer sa clé Open AI
-  * Lancer la petite stack avec un mini chatbot
-  * Jetons un coup d'œil rapide aux sources
-  * [Optionnel] Activer l'outil d'observabilité Langfuse [voir init headless](https://langfuse.com/self-hosting/administration/headless-initialization)
-
-* Problématique : TODO slide nécessité de RAG, chunking et vectorisation
-    * Opération longues on va par faire un simple API, nécessité de "batch" / workflow
-
-* Introduction rapide à Temporal IO
-  * Mon premier workflow et activité hello world en python
-  * Indexing des pages web dans notre bot (en brute HTML)
-
-### Part 2 - Collect de données, scriptons un peu [Python OU TypeScript]
-
-* Découverte de la source de données
-  * [Actu Brest Métropole > Déplacements](https://brest.fr/nos-actualites?category%5B927%5D=927&commune=&quartier=&query=)
-* Crawling Web simple en TypeScript ou Python, au choix
-* Scraping Web basique (non authentifié, sans JS)
-
-### Partie 3 - Convertion [Typescript]
-
-* Découverte de Readability / Deffuble
-* HTML vers MD, TurnItDown
-
-### Chunking [Python]
-
-### Indexing [Python]
