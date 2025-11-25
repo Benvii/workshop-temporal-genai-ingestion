@@ -23,14 +23,14 @@ Partie 3 - Clean les pages et les convertir en markdown (première activité Typ
 
 Partie 4 - Collectons les pages automatiquement [⏰ 25 min - 0h50 -> 1h15 ]
 - [x] Création de l’activité de Scraping qui depuis une source avec URI va télécharger la page. 
-- [ ] Introduction du stage de crawling, avec l’activité pré-développée
+- [x] Introduction du stage de crawling, avec l’activité pré-développée
 - [ ] [Optionnel] Concept de Continue As New, introduction d’un bulk size
 
 
 Partie 5 - (optimisation) - Éviter les prompts qui explosent, découpons nos documents - Chunking [⏰ 20 min - 1h40 -> 2h00 ]
-- [ ]  Ajout d’un stage de Chunking avec du recurvive Text Splitter.
-- [ ]  Adaptation de l’activité d’indexing pour quelle ingère le chunks générés.
-- [ ]  Ouverture sur d’autres approches de chunking.
+- [x]  Ajout d’un stage de Chunking avec du recurvive Text Splitter.
+- [x]  Adaptation de l’activité d’indexing pour quelle ingère le chunks générés.
+- [x]  Ouverture sur d’autres approches de chunking.
 
 Partie 6 - Allez plus loin [⏰ 15 min - 2h00 -> 2h15 ]
 - [ ]  Quid de l’authentification et Temporal, docker compose avec Keycloack, auth des workers
