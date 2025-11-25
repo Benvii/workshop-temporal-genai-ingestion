@@ -10,6 +10,7 @@ from avelbot_ingestion.helpers.logging_config import get_app_logger
 from avelbot_ingestion.models.IngestionWorkflowInput import IngestionWorkflowInput
 from avelbot_ingestion.models.Source import Source
 from avelbot_ingestion.models.SourceStatusEnum import SourceStatusEnum
+from avelbot_ingestion.workflows.stages.crawling_stage import crawling_stage
 from avelbot_ingestion.workflows.stages.recursive_text_chunking_stage import recursive_text_chunking_stage
 from avelbot_ingestion.workflows.utils import split_sources_by_error
 
@@ -33,106 +34,14 @@ class IngestionWorkflow:
         sources_with_errors : List[Source] = [] # Contiendra les sources en erreur.
 
         # Part 4.b - Crawling simplified - START
-        # sources_to_be_crawled = sources
-        # crawled_sources_completed = []
-        # crawling_tasks = [
-        #     # NE PAS AWAIT ICI
-        #     workflow.execute_activity(
-        #         activity="PY-crawling_activity",
-        #         task_queue="PY_WORKER_TASK_QUEUE",
-        #         args=[source, 1],
-        #         start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        #     )
-        #     for source in sources_to_be_crawled
-        # ]
-        # crawled_sources_lists = await asyncio.gather(*crawling_tasks)
-        # crawled_sources_result = [src for sublist in crawled_sources_lists for src in sublist]
-        # # La on a la source principal complètement crawlée en completed
-        # # Mais il reste les sources filles dont on dont on doit déterminer si elles sont bien des pages web
-        # # Elles auront un max_depth de 0, on peut rappeler crawling task dessus.
-        # sources_to_be_crawled = list(filter(lambda source: source.current_status == SourceStatusEnum.DISCOVERED , crawled_sources_result))
-        # logger.debug("sources_to_be_crawled (DISCOVERED): %i sources.", len(sources_to_be_crawled))
-        # crawled_sources_completed.extend(list(filter(lambda source: source.current_status == SourceStatusEnum.COMPLETED, crawled_sources_result)))
-        # logger.debug("crawled_sources_completed: %i sources.", len(crawled_sources_completed))
-        #
-        # crawling_tasks = [workflow.execute_activity(
-        #     activity="PY-crawling_activity",
-        #     task_queue="PY_WORKER_TASK_QUEUE",
-        #     args=[source],  # sans page_size
-        #     start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        # ) for source in sources_to_be_crawled]
-        # crawled_sources_lists: List[List[Source]] = await asyncio.gather(*crawling_tasks)
-        # crawled_sources_result = [src for sublist in crawled_sources_lists for src in sublist]
-        # sources_to_be_crawled = list(
-        #     filter(lambda source: source.current_status == SourceStatusEnum.DISCOVERED, crawled_sources_result))
-        # logger.debug("sources_to_be_crawled: %i sources.", len(sources_to_be_crawled))
-        # crawled_sources_completed.extend(
-        #     list(filter(lambda source: source.current_status == SourceStatusEnum.COMPLETED, crawled_sources_result)))
-        # logger.debug("crawled_sources_completed: %i sources.", len(crawled_sources_completed))
-
-        # crawled_sources_lists_raw: list[list[dict]] = await asyncio.gather(*crawling_tasks)
-        # crawled_sources_lists: list[list[Source]] = [
-        #     [Source.model_validate(s) for s in sublist]
-        #     for sublist in crawled_sources_lists_raw
-        # ]
-
+        sources = await crawling_stage(sources)
+        sources, err_sources = split_sources_by_error(sources)
+        sources_with_errors.extend(err_sources)
         # Part 4.b - Crawling simplified - END
-
-        # Part 4.b - Crawling - START
-        # total_sources = await workflow.execute_activity(
-        #         activity="PY-save_sources_activity",
-        #         task_queue="PY_WORKER_TASK_QUEUE",
-        #         args=[sources],
-        #         start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        # )
-        # logging.debug("Saved initial total sources %i", total_sources)
-        #
-        # while total_sources < 10 and len(sources) > 0: # Limite max de source à 20
-        #     crawling_tasks = [
-        #         workflow.execute_activity(
-        #             activity="PY-crawling_activity",
-        #             task_queue="PY_WORKER_TASK_QUEUE",
-        #             args=[source, 3], # page_size 3, c'est-à-dire qu'on pagine l'exécution à la création de 3 sources
-        #             start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        #         )
-        #         for source in sources
-        #     ]
-        #     results_task = await asyncio.gather(*crawling_tasks)
-        #     sources_flat = [src for sublist in results_task for src in sublist]
-        #     sources, err_sources = split_sources_by_error(sources_flat)
-        #     sources_with_errors.extend(err_sources)
-        #
-        #     # Save new sources
-        #     total_sources = await workflow.execute_activity(
-        #         activity="PY-save_sources_activity",
-        #         task_queue="PY_WORKER_TASK_QUEUE",
-        #         args=[sources],
-        #         start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        #     )
-        #
-        #     # Fetch sources to be crawled
-        #     sources = await workflow.execute_activity( # TODO prioritise max_depth: 0, IN_PROGRESS
-        #         activity="PY-fetch_sources_activity",
-        #         task_queue="PY_WORKER_TASK_QUEUE",
-        #         args=['source.current_stage == "CRAWLING" && (source.current_status == "DISCOVERED" || source.current_status == "IN_PROGRESS")', 5],
-        #         start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        #     )
-        #
-        # sources = await workflow.execute_activity(
-        #     activity="PY-fetch_sources_activity",
-        #     task_queue="PY_WORKER_TASK_QUEUE",
-        #     args=[
-        #         'source.current_stage == "CRAWLING" && source.current_status == "COMPLETED"', # + IN_PROGRESS
-        #         10], # Fetch Max of 10 sources
-        #     start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        # )
-        # Part 4.b - Crawling - END
-
 
 
         # -- Démarrage d'un pool d'activitées en parallèle sur toutes les sources --
         printing_tasks = [
-            # NE PAS AWAIT ICI
             workflow.execute_activity(
                 activity="PY-print_source_activity",
                 task_queue="PY_WORKER_TASK_QUEUE",
