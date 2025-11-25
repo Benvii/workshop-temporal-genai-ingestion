@@ -18,6 +18,8 @@ dependencies = [
     "openai>=2.8.1",
     "psycopg[binary]>=3.2.12",
     "cel-python>=0.4.0",
+    "aiofiles>=25.1.0",
+    "langchain-text-splitters>=1.0.0",
 ]
 
 [build-system]

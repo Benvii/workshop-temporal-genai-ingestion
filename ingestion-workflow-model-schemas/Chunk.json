@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Chunk",
+  "description": "Un chunk représente un segment de texte avec ses métadonnées.",
+  "type": "object",
+  "properties": {
+    "text": {
+      "description": "Contenu textuel du chunk.",
+      "type": "string",
+      "minLength": 1
+    },
+    "metadata": {
+      "description": "Métadonnées du chunk.",
+      "type": "object",
+      "default": {},
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "boolean" },
+          { "type": "integer" },
+          {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                { "type": "string" },
+                { "type": "boolean" },
+                { "type": "integer" }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": ["text"]
+}

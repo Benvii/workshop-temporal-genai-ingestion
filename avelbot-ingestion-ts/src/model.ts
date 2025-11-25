@@ -14,6 +14,7 @@ export interface IngestionWorkflowInput {
    */
   sources: Source[];
   indexing_config?: IndexingStageConfiguration;
+  recursive_chunking_config?: RecursiveChunkingStageConfiguration;
 }
 /**
  * Chaque page web est une source.
@@ -46,12 +47,23 @@ export interface Source {
    */
   parent_uri?: string;
   current_stage?: StageEnum;
+  current_status?: SourceStatusEnum;
+  options?: SourceOptions;
   /**
    * Metadata of the source
    */
   metadata?: {
     [k: string]: string | boolean | number | (string | boolean | number)[];
   };
+}
+/**
+ * Option de source
+ */
+export interface SourceOptions {
+  /**
+   * Restraint les URLs crawlées a démarrer avec ce prefix.
+   */
+  crawling_url_startswith?: string[];
 }
 /**
  * Configration de stage d'embedding / vectorisation.
@@ -69,6 +81,19 @@ export interface IndexingStageConfiguration {
    * Nom du modèle OpenAI utilisé
    */
   openai_embedding_model: string;
+}
+/**
+ * Configration de stage de chunking.
+ */
+export interface RecursiveChunkingStageConfiguration {
+  /**
+   * Taille des chunk en caractères.
+   */
+  chunk_size?: number;
+  /**
+   * Taille des chunk en caractères.
+   */
+  chunk_overlap?: number;
 }
 
 /**
@@ -120,4 +145,13 @@ export enum StageEnum {
   CONVERTION = "CONVERTION",
   CHUNKING = "CHUNKING",
   INDEXING = "INDEXING"
+}
+/**
+ * Liste de status de traitement au sein d'un stage dans lesquels une source peut se trouver. Introduit au crawling.
+ */
+export enum SourceStatusEnum {
+  DISCOVERED = "DISCOVERED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR"
 }

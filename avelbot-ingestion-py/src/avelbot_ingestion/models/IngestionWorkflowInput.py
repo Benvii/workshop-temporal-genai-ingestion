@@ -8,9 +8,11 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 from .IndexingStageConfiguration import IndexingStageConfiguration
+from .RecursiveChunkingStageConfiguration import RecursiveChunkingStageConfiguration
 from .Source import Source
 
 
 class IngestionWorkflowInput(BaseModel):
     sources: List[Source] = Field(..., description="Liste des pages web d'entrée")
     indexing_config: Optional[IndexingStageConfiguration] = None
+    recursive_chunking_config: Optional[RecursiveChunkingStageConfiguration] = None

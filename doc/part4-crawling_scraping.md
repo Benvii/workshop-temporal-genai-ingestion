@@ -6,7 +6,12 @@
   * Appeler l'activité de crawling en amont
   * Comprendre le concept de Continue As New
 
-TODO TOC
+<!-- TOC -->
+* [Partie 4 - Crawling et scraping des pages](#partie-4---crawling-et-scraping-des-pages)
+  * [Création de l'activité de Scraping](#création-de-lactivité-de-scraping)
+  * [Appel de l'activité de Crawling](#appel-de-lactivité-de-crawling)
+  * [Tester l'ensemble](#tester-lensemble)
+<!-- TOC -->
 
 ## Création de l'activité de Scraping
 
@@ -126,4 +131,4 @@ TODO, dev cette activité :
 
 TODO
 
-Partie suivant : Chunking TODO.
+Partie suivant : [ Partie 5 -Éviter les prompts qui explosent, découpons nos documents - Chunking](./part5-chunking.md)

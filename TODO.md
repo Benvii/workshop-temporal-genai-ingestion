@@ -2,12 +2,12 @@ Plan du codelab
 
 
 Part 1 - Découvert de l’environnement [⏰ 20 min - 0h -> 0h20]
-- [ ]  Composants d’architecture
-- [ ]  Lancement d’Avel Bot
-    - [ ] Interroger le bot voir qu’il est vide.
-    - [ ] Ajouter un page web via l’interface, en chope tout les neuds texte de la page. Pas très propre.
-    - [ ] Voir que le document est bien indexé, en recherchant n’importe quoi dans la base.
-    - [ ] Clean la base.
+- [x]  Composants d’architecture
+- [x]  Lancement d’Avel Bot
+    - [x] Interroger le bot voir qu’il est vide.
+    - [x] Ajouter un page web via l’interface, en chope tout les neuds texte de la page. Pas très propre.
+    - [x] Voir que le document est bien indexé, en recherchant n’importe quoi dans la base.
+    - [x] Clean la base.
 - [ ]  Découverte explication rapide de la chaine RAG via une trace langfuse + schéma
 
 > Objectifs savoir utiliser AvelBot, clean la base vectoriel et voir les documents dedans.
@@ -22,7 +22,7 @@ Partie 3 - Clean les pages et les convertir en markdown (première activité Typ
 - [x]  Découverte Deffuble, isoler le contenu « utile » de la page web
 
 Partie 4 - Collectons les pages automatiquement [⏰ 25 min - 0h50 -> 1h15 ]
-- [ ] Création de l’activité de Scraping qui depuis une source avec URI va télécharger la page. 
+- [x] Création de l’activité de Scraping qui depuis une source avec URI va télécharger la page. 
 - [ ] Introduction du stage de crawling, avec l’activité pré-développée
 - [ ] [Optionnel] Concept de Continue As New, introduction d’un bulk size
 
@@ -44,3 +44,5 @@ Expliquer le Terminate du workflow.
 
 
 Manque quelques run config VS Code sur la partie scraping.
+
+https://github.com/toon-format/toon

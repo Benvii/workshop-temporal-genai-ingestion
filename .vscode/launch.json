@@ -43,6 +43,24 @@
       "console": "integratedTerminal"
     },
     {
+      "name": "[🐍] Trigger - Part 5 - Chunking Rec (2 articles)",
+      "type": "python",
+      "pythonPath": "${workspaceFolder}/.venv/bin/python",
+      "request": "launch",
+      "program": "${workspaceFolder}/avelbot-ingestion-py/src/avelbot_ingestion/runners/trigger_ingestion_workflow.py",
+      "args": [
+        "--workflow-input-yaml=part5-chunking_recursive.yml"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "LOGGING_ENV": "DEV",
+        "LOGGING_LEVEL": "DEBUG",
+        "TEMPORAL_LOGGING_LEVEL": "INFO"
+      },
+      "cwd": "${workspaceFolder}/avelbot-ingestion-py/ressources/workflow_inputs/",
+      "console": "integratedTerminal"
+    },
+    {
       "name": "[🐍] Main Worker",
       "type": "debugpy",
       "request": "launch",

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RecursiveChunkingStageConfiguration",
+  "description": "Configration de stage de chunking.",
+  "type": "object",
+  "properties": {
+    "chunk_size": {
+      "description": "Taille des chunk en caractères.",
+      "type": "integer"
+    },
+    "chunk_overlap": {
+      "description": "Taille des chunk en caractères.",
+      "type": "integer"
+    }
+  },
+  "required": ["database_uri", "openai_embedding_model", "collection_name"]
+}

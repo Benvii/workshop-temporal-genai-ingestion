@@ -13,6 +13,9 @@
     },
     "indexing_config": {
       "$ref": "IndexingStageConfiguration.json"
+    },
+    "recursive_chunking_config": {
+      "$ref": "RecursiveChunkingStageConfiguration.json"
     }
   },
   "required": ["sources"]
