@@ -8,6 +8,8 @@ from avelbot_ingestion.models.MimeTypesEnum import MimeTypesEnum
 from avelbot_ingestion.models.Source import Source
 
 import requests
+import random
+import asyncio
 
 from avelbot_ingestion.models.StageEnum import StageEnum
 
@@ -30,6 +32,7 @@ async def crawling_activity(source: Source, page_size: Optional[int] = None) -> 
     sources = [source]
 
     try:
+        await asyncio.sleep(random.uniform(0, 15)) # Random waiting time to avoid bans
         response = requests.get(source.uri, timeout=10)
         response.raise_for_status()
     except requests.RequestException as e:
@@ -94,7 +97,7 @@ async def crawling_activity(source: Source, page_size: Optional[int] = None) -> 
         source.current_stage = StageEnum.CRAWLING
         return sources
 
-    page_links = unique_links[offset : offset + page_size]
+    page_links = unique_links[offset : offset + page_size] if page_size else unique_links
 
     for link in page_links:
         new_source = Source(

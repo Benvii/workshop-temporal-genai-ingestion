@@ -59,7 +59,10 @@ from avelbot_ingestion.helpers.url_helpers import url_to_file_name
 url_to_file_name(source.uri)
 ```
 * ⚠ N'oubliez pas toutes nouvelle activité doit être référencée sur un worker 😉
-* Vous pouvez tester à l'aide de la run configuration PyCharm `Part 4.a - Scraping`
+* TODO Ajouter au workflow l'appel vers cette activité
+* Vous pouvez tester à l'aide de la run configuration :
+  * PyCharm `Part 4.a - Scraping`
+  * VS Code `[🐍] Trigger - Part 4.a - Scraping`
 
 Si besoin la solution ci-dessous ⬇️.
 
@@ -122,13 +125,42 @@ async def scraping_activity(source: Source) -> Source:
 
 ## Appel de l'activité de Crawling
 
-TODO, dev cette activité :
-* a base de beautiful soup.
-* avec pagination
-* introduire en option le Continue As New ? + bulk size ?
+L'activité de crawling est déjà développée dans [crawling_activity.py](../avelbot-ingestion-py/src/avelbot_ingestion/activities/crawling_activity.py).
+
+Son fonctionnement est assez simple, elle prend en entrée une source et créé un source pour chauque lien trouvé dans
+la page correspond dont l'url commence par un des motifs définit en option de source `source.options.crawling_url_startswith`.
+
+Je vous invite à voir le fichier [part4.b-crawl.yml](../avelbot-ingestion-py/ressources/workflow_inputs/part4.b-crawl.yml),
+qui décrit ces la config d'entrée du workflow que nous allons utiliser.
+
+Pour activer ce crawling vous pouvez simplement décommenter le block suivant dans
+[ingestion_workflow.py](../avelbot-ingestion-py/src/avelbot_ingestion/workflows/ingestion_workflow.py).
+
+```python
+# Part 4.b - Crawling simplified - START
+sources = await crawling_stage(sources)
+sources, err_sources = split_sources_by_error(sources)
+sources_with_errors.extend(err_sources)
+# Part 4.b - Crawling simplified - END
+```
+
+Nous verrons dans la dernière partie que crawler beaucoup d'information revient à déclencher beaucoups d'activités et
+peut vite saturer l'Event History d'un run de workflow Temporal ([voir limite de mémoire ici des payload entrée / sortie](https://docs.temporal.io/workflow-execution/limits#workflow-execution-limits)).
+
+A ce moment là il est possible de découper l'exécution
+du workflow en plusieurs via [Continue As New](https://docs.temporal.io/develop/php/continue-as-new).
 
 ## Tester l'ensemble
 
-TODO
+Lancer le workflow via :
+* PyCharm : `Part 4.b - Crawling`
+* VS Code : `[🐍] Trigger - Part 4.b - Crawling`
 
-Partie suivant : [ Partie 5 -Éviter les prompts qui explosent, découpons nos documents - Chunking](./part5-chunking.md)
+Vous devriez avoir un workflow beaucoup plus fourni :
+![](./images/part4-Crawling_workflow_event_history.png)
+
+N'hésitez pas à aller jouer avec ces nouvelles données sur AvelBot.
+
+---
+
+Partie suivante : [ Partie 5 -Éviter les prompts qui explosent, découpons nos documents - Chunking](./part5-chunking.md)

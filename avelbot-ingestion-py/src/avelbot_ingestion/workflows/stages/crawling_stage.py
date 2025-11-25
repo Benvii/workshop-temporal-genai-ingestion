@@ -5,6 +5,7 @@ from typing import List
 
 from temporalio import workflow
 
+from avelbot_ingestion.helpers.deduplicate_sources import deduplicate_sources
 from avelbot_ingestion.helpers.logging_config import get_app_logger
 from avelbot_ingestion.models.Source import Source
 from avelbot_ingestion.models.SourceStatusEnum import SourceStatusEnum
@@ -24,41 +25,32 @@ async def crawling_stage(sources: List[Source]) -> List[Source]:
     :param sources: List of sources to be chunked.
     """
 
-    sources_to_be_crawled = sources
-    crawled_sources_completed = []
-    crawling_tasks = [
-        workflow.execute_activity(
-            activity=crawling_activity,
-            task_queue="PY_WORKER_TASK_QUEUE",
-            args=[source, 1],
-            start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-        )
-        for source in sources_to_be_crawled
-    ]
-    crawled_sources_lists = await asyncio.gather(*crawling_tasks)
-    crawled_sources_result = [src for sublist in crawled_sources_lists for src in sublist]
-    # La on a la source principal complètement crawlée en completed
-    # Mais il reste les sources filles dont on dont on doit déterminer si elles sont bien des pages web
-    # Elles auront un max_depth de 0, on peut rappeler crawling task dessus.
-    sources_to_be_crawled = list(filter(lambda source: source.current_status == SourceStatusEnum.DISCOVERED , crawled_sources_result))
-    logger.debug("sources_to_be_crawled (DISCOVERED): %i sources.", len(sources_to_be_crawled))
-    crawled_sources_completed.extend(list(filter(lambda source: source.current_status == SourceStatusEnum.COMPLETED, crawled_sources_result)))
-    logger.debug("crawled_sources_completed: %i sources.", len(crawled_sources_completed))
-
-    logger.debug("Type sources_to_be_crawled[0] : %s", type(sources_to_be_crawled[0]))
-    crawling_tasks = [workflow.execute_activity(
-        activity=crawling_activity,
-        task_queue="PY_WORKER_TASK_QUEUE",
-        args=[source],  # sans page_size
-        start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-    ) for source in sources_to_be_crawled]
-    crawled_sources_lists = await asyncio.gather(*crawling_tasks)
-    crawled_sources_result = [src for sublist in crawled_sources_lists for src in sublist]
+    # Ensure only sources without status and stage, meaning initial ones are crawled
     sources_to_be_crawled = list(
-        filter(lambda source: source.current_status == SourceStatusEnum.DISCOVERED, crawled_sources_result))
-    logger.debug("sources_to_be_crawled: %i sources.", len(sources_to_be_crawled))
-    crawled_sources_completed.extend(
-        list(filter(lambda source: source.current_status == SourceStatusEnum.COMPLETED, crawled_sources_result)))
-    logger.debug("crawled_sources_completed: %i sources.", len(crawled_sources_completed))
+        filter(lambda source: source.current_stage == None and source.current_status == None, sources))
+    crawled_sources_completed = list(
+        filter(lambda source: not(source.current_stage == None and source.current_status == None), sources))
 
-    return sources
+    # A améliorer, ajouter de la deduplication
+    while len(sources_to_be_crawled) > 0:
+        crawling_tasks = [
+            workflow.execute_activity(
+                activity=crawling_activity,
+                task_queue="PY_WORKER_TASK_QUEUE",
+                args=[source, None],
+                start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
+            )
+            for source in sources_to_be_crawled
+        ]
+        crawled_sources_lists = await asyncio.gather(*crawling_tasks)
+        crawled_sources_result = [src for sublist in crawled_sources_lists for src in sublist]
+
+        sources_to_be_crawled = list(
+            filter(lambda source: source.current_status == SourceStatusEnum.DISCOVERED, crawled_sources_result))
+        crawled_sources_completed.extend(
+            list(filter(lambda source: source.current_status == SourceStatusEnum.COMPLETED, crawled_sources_result)))
+
+        logger.debug("sources_to_be_crawled (DISCOVERED): %i sources.", len(sources_to_be_crawled))
+        logger.debug("crawled_sources_completed (COMPLETED): %i sources.", len(crawled_sources_completed))
+
+    return crawled_sources_completed

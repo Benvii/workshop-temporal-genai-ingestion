@@ -2,6 +2,23 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "[🐍] AvelBot (Streamlit)",
+      "type": "python",
+      "request": "launch",
+      "module": "streamlit",
+      "args": [
+        "run",
+        "avelbot/app.py",
+        "--server.port=8501"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      },
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
       "name": "[🐍] GENERATE PY MODELS from schema",
       "type": "python",
       "pythonPath": "${workspaceFolder}/.venv/bin/python",
@@ -32,6 +49,42 @@
       "program": "${workspaceFolder}/avelbot-ingestion-py/src/avelbot_ingestion/runners/trigger_ingestion_workflow.py",
       "args": [
         "--workflow-input-yaml=part2-vect_pages_with_temporal.yml"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "LOGGING_ENV": "DEV",
+        "LOGGING_LEVEL": "DEBUG",
+        "TEMPORAL_LOGGING_LEVEL": "INFO"
+      },
+      "cwd": "${workspaceFolder}/avelbot-ingestion-py/ressources/workflow_inputs/",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[🐍] Trigger - Part 4.a - Scraping",
+      "type": "python",
+      "pythonPath": "${workspaceFolder}/.venv/bin/python",
+      "request": "launch",
+      "program": "${workspaceFolder}/avelbot-ingestion-py/src/avelbot_ingestion/runners/trigger_ingestion_workflow.py",
+      "args": [
+        "--workflow-input-yaml=part4.a-scrape-only.yml"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "LOGGING_ENV": "DEV",
+        "LOGGING_LEVEL": "DEBUG",
+        "TEMPORAL_LOGGING_LEVEL": "INFO"
+      },
+      "cwd": "${workspaceFolder}/avelbot-ingestion-py/ressources/workflow_inputs/",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[🐍] Trigger - Part 4.b - Crawling",
+      "type": "python",
+      "pythonPath": "${workspaceFolder}/.venv/bin/python",
+      "request": "launch",
+      "program": "${workspaceFolder}/avelbot-ingestion-py/src/avelbot_ingestion/runners/trigger_ingestion_workflow.py",
+      "args": [
+        "--workflow-input-yaml=part4.b-crawl.yml"
       ],
       "env": {
         "PYTHONUNBUFFERED": "1",

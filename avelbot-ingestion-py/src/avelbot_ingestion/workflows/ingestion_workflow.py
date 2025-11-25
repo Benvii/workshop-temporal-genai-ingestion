@@ -16,6 +16,8 @@ from avelbot_ingestion.workflows.utils import split_sources_by_error
 
 # Import activity, passing it through the sandbox without reloading the module
 with workflow.unsafe.imports_passed_through():
+    from avelbot_ingestion.activities.print_source_activity import print_source_activity
+    from avelbot_ingestion.activities.scraping_activity import scraping_activity
     from avelbot_ingestion.activities.index_source_no_chunk_activity import index_source_no_chunk_activity
     from avelbot_ingestion.activities.index_source_with_chunks_activity import index_source_with_chunks_activity
 
@@ -30,7 +32,6 @@ class IngestionWorkflow:
 
         logging.info("IngestionWorkflow started.")
         sources = ingestion_workflow_input.sources
-        total_sources = len(sources)
         sources_with_errors : List[Source] = [] # Contiendra les sources en erreur.
 
         # Part 4.b - Crawling simplified - START
@@ -43,7 +44,7 @@ class IngestionWorkflow:
         # -- Démarrage d'un pool d'activitées en parallèle sur toutes les sources --
         printing_tasks = [
             workflow.execute_activity(
-                activity="PY-print_source_activity",
+                activity=print_source_activity,
                 task_queue="PY_WORKER_TASK_QUEUE",
                 args=[source],
                 start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
@@ -59,7 +60,7 @@ class IngestionWorkflow:
         # COMPLETER ICI - START (partie 4.a)
         scraping_tasks = [
             workflow.execute_activity(
-                activity="PY-scraping_activity",
+                activity=scraping_activity,
                 task_queue="PY_WORKER_TASK_QUEUE",
                 args=[source],
                 start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),

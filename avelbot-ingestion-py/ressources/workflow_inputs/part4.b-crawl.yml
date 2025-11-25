@@ -11,7 +11,7 @@ indexing_config: # Configuration transmise à l'activité d'indexation
 sources:
 # ----- Filtre : Page actu -----
 - uri: https://brest.fr/nos-actualites?category%5B927%5D=927&commune=&quartier=&query=
-  max_depth: 1 # 1 niveaux de pages filles
+  max_depth: 1 # 1 niveau de pages filles, attention sinon risque de se faire ban de brest.fr
   options:
     crawling_url_startswith: # Filtre les URLs crawlé partant de cette source
       - https://brest.fr/actualites/
@@ -26,3 +26,20 @@ sources:
   raw_file_path:
   converted_md_path:
   metadata:
+# Fallback site de Bibus mais Defuddle semble moins bien marcher dessus
+#- uri: https://www.bibus.fr/bibus-et-vous/actualites
+#  max_depth: 1 # 1 niveau de pages filles, attention sinon risque de se faire ban de brest.fr
+#  options:
+#    crawling_url_startswith: # Filtre les URLs crawlé partant de cette source
+#      - https://www.bibus.fr/bibus-et-vous/actualites/les-evenements-du-reseau/
+#      #- https://brest.fr/nos-actualites
+#
+#  mime_type: # Sera déterminé par le crawler
+#
+#  current_stage:
+#  current_status:
+#
+#  error:
+#  raw_file_path:
+#  converted_md_path:
+#  metadata:

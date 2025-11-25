@@ -60,7 +60,7 @@ disponibles, s’étaler sur plusieurs heures, voire des jours d’exécution.
 ### Modèle de données qui serait utilisé
 
 Dans ce workshop, nous allons travailler avec le modèle de données suivant, il est déjà implémenté :
-* En python au travers d'objets PyDantic disponible ICI TODO
+* En python au travers d'objets PyDantic disponibles dans [models](../avelbot-ingestion-py/src/avelbot_ingestion/models).
 * En Typescript (nous le verrons par la suite)
 
 En bref :

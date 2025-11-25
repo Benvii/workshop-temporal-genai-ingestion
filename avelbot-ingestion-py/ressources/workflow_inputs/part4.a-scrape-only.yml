@@ -11,7 +11,8 @@ indexing_config: # Configuration transmise à l'activité d'indexation
 # Listes des pages web pré-téléchargées avec leur emplacement relatif au root du repository.
 sources:
 # ----- Article : A Palaren, un belvédère sur rade en préparation | Brest métropole -----
-- uri: https://brest.fr/actualites/palaren-un-belvedere-sur-rade-en-preparation
+- uri: https://www.bibus.fr/bibus-et-vous/actualites/les-evenements-du-reseau/reseau-2026-bibus-vient-votre-rencontre
+#- uri: https://brest.fr/actualites/palaren-un-belvedere-sur-rade-en-preparation
   mime_type: text/html
 
   # La page étant déjà téléchargée, on la positionne au stage SCRAPING, finalisée COMPLETED.
@@ -24,7 +25,8 @@ sources:
   metadata:
 
 # ----- Article : Début des travaux pour les ascenseurs inclinés du CHU | Brest métropole -----
-- uri: https://brest.fr/actualites/debut-des-travaux-pour-les-ascenseurs-inclines-du-chu
+- uri: https://www.bibus.fr/bibus-et-vous/actualites/les-evenements-du-reseau/nouvelle-plateforme-de-location-de-velocibus
+#- uri: https://brest.fr/actualites/debut-des-travaux-pour-les-ascenseurs-inclines-du-chu
   mime_type: text/html
   current_stage: CRAWLING
   current_status: COMPLETED

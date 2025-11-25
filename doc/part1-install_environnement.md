@@ -37,13 +37,15 @@ Récap des services et URLs :
 **Vous devez disposer de docker-compose au préalable.**
 
 Lancement de la stack docker :
-<!-- TODO BENJ ajouter des run configurations / task VS Code ? -->
 ```bash
 cd $(git rev-parse --show-toplevel)/docker
 cp template.env .env
 chmod a+r scripts/postgres/init.sql
 chmod -R a+rX scripts/temporal/dynamicconfig 
-docker compose --env-file ../.env -f docker-compose.langfuse.yml -f docker-compose.pg.yml -f docker-compose.temporal.yml up -d
+docker compose -p worker-temporal-genai --env-file ../.env -f docker-compose.langfuse.yml -f docker-compose.pg.yml -f docker-compose.temporal.yml up -d
+
+# Stopper la Stack sans conserver les volumes :
+#  docker compose -p worker-temporal-genai --env-file ../.env -f docker-compose.langfuse.yml -f docker-compose.pg.yml -f docker-compose.temporal.yml down -v
 ```
 
 ## Découvrir AvelBot
@@ -55,14 +57,17 @@ Pour l'installer si vous ne l'avez pas déjà suivez les instructions ici : http
 
 
 ### Installation et lancement du Streamlit AvelBot
-Lancer l'application Streamlit
-<!-- TODO BENJ ajouter des run configurations ? -->
+Lancer l'application Streamlit :
 ```bash
 cd $(git rev-parse --show-toplevel)/
 uv sync
 source .venv/bin/activate
 streamlit run avelbot/app.py
 ```
+
+Vous pouvez aussi lancer AvelBot via :
+* PyCharm, run `AvelBot (Streamlit)`
+* VS Code, run `[🐍] AvelBot (Streamlit)`
 
 ### Interroger le bot
 
