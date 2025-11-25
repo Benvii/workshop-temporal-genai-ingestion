@@ -1,5 +1,5 @@
 [project]
-name = "brest-transport-bot"
+name = "avelbot"
 version = "0.1.0"
 description = "Mini chatbot RAG Streamlit basé sur les actu transport de Brest Métropole"
 readme = "README.md"
@@ -18,6 +18,3 @@ dependencies = [
     "watchdog>=6.0.0",
 ]
 
-[project.scripts]
-# So you can do: `uv run bot`
-bot = "brest_transport_bot.cli:main"

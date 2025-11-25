@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Generate TS model" type="NodeJSConfigurationType" application-parameters="tsx generate_model.ts" path-to-js-file="generate_model.ts" typescript-loader="bundled" working-dir="$PROJECT_DIR$/avelbot-ingestion-ts/src">
+  <configuration default="false" name="Generate TS model" type="NodeJSConfigurationType" application-parameters="tsx generate_model.ts" path-to-node="$USER_HOME$/.nvm/versions/node/v24.11.0/bin/node" path-to-js-file="generate_model.ts" typescript-loader="bundled" working-dir="$PROJECT_DIR$/avelbot-ingestion-ts/src">
     <method v="2" />
   </configuration>
 </component>

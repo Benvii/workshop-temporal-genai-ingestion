@@ -1,6 +1,6 @@
 [tool.uv.workspace]
 members = [
-  "brest-transport-bot",
+  "avelbot",
   "avelbot-ingestion-py"
 ]
 
