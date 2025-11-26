@@ -38,8 +38,9 @@ Récap des services et URLs :
 
 Lancement de la stack docker :
 ```bash
-cd $(git rev-parse --show-toplevel)/docker
+cd $(git rev-parse --show-toplevel)/
 cp template.env .env
+cd docker
 chmod a+r scripts/postgres/init.sql
 chmod -R a+rX scripts/temporal/dynamicconfig 
 docker compose -p worker-temporal-genai --env-file ../.env -f docker-compose.langfuse.yml -f docker-compose.pg.yml -f docker-compose.temporal.yml up -d
