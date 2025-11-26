@@ -8,6 +8,7 @@ import {JSDOM} from "jsdom";
 import Defuddle from "defuddle";
 
 import TurndownService from "turndown";
+import {Readability} from "@slax-lab/readability";
 
 
 export async function TS_CONVERSION_HTML(
@@ -39,36 +40,24 @@ export async function TS_CONVERSION_HTML(
   const rawFileName = path.basename(source_raw_file_path);
   const outputFilePath = path.join(artifactsDir, rawFileName + ".md");
 
+  let markdown = "";
+
   // COMPLETER ICI - START - Partie 3
   // - lire le fichier HTML : source_raw_file_path
   // - suivre les indications partie 3, init Defuddle + parsing
   // - chainer TurnItDown pour la conversion en Markdown celle de Defuddle ne fonctionnant pas
   // - peupler la metadata['title'] avec le titre extrait pas Defuddle
   // - écrire le markdown dans markdown, la suite de squelette l'enregistre au bon endroit
-  const html_source = await fs.readFile(source_raw_file_path, { encoding: "utf-8" });
-  const jsdom = new JSDOM(html_source, { url: source.uri, pretendToBeVisual: true });
-  const window = jsdom.window;
-  const document = window.document;
-
-  const defuddle = new Defuddle(document);
-  const article = defuddle.parse();
-
-  const turndownService = new TurndownService();
-  const markdown = turndownService.turndown(article.content);
-
-  // Peupler les metadonnées.
-  source.metadata ??= {}; // S'assure que source.metadata est initialisé
-  source.metadata['title'] = article.title;
-  console.log("Extracted title %s", article);
   // COMPLETER ICI - END - Partie 3
 
 
-  // Save converted markdown content
-  await fs.writeFile(outputFilePath, markdown, { encoding: "utf-8" });
-  console.log("Saved converted markdown to %s", outputFilePath);
+    // Save converted markdown content
+    await fs.writeFile(outputFilePath, markdown, { encoding: "utf-8" });
+    console.log("Saved converted markdown to %s", outputFilePath);
 
-  source.current_stage = StageEnum.CONVERTION;
-  source.converted_md_path = outputFilePath;
+    source.current_stage = StageEnum.CONVERTION;
+    source.converted_md_path = outputFilePath;
+
 
   return source;
 }

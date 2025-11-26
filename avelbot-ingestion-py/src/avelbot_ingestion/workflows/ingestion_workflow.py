@@ -17,7 +17,7 @@ from avelbot_ingestion.workflows.utils import split_sources_by_error
 # Import activity, passing it through the sandbox without reloading the module
 with workflow.unsafe.imports_passed_through():
     from avelbot_ingestion.activities.print_source_activity import print_source_activity
-    from avelbot_ingestion.activities.scraping_activity import scraping_activity
+    # from avelbot_ingestion.activities.scraping_activity import scraping_activity
     from avelbot_ingestion.activities.index_source_no_chunk_activity import index_source_no_chunk_activity
     from avelbot_ingestion.activities.index_source_with_chunks_activity import index_source_with_chunks_activity
 
@@ -58,57 +58,46 @@ class IngestionWorkflow:
 
 
         # COMPLETER ICI - START (partie 4.a)
-        scraping_tasks = [
-            workflow.execute_activity(
-                activity=scraping_activity,
-                task_queue="PY_WORKER_TASK_QUEUE",
-                args=[source],
-                start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-            )
-            for source in sources
-        ]
-        sources, err_sources = split_sources_by_error(await asyncio.gather(*scraping_tasks))
-        sources_with_errors.extend(err_sources)
         # COMPLETER ICI - END (partie 4.a)
 
 
         # COMPLETER ICI - START (partie 3)
         # - appeler l'activité "TS_CONVERSION_HTML"
-        conversion_tasks = [
-            workflow.execute_activity(
-                activity="TS_CONVERSION_HTML",
-                task_queue="TS_WORKER_TASK_QUEUE",
-                args=[source],
-                start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-            )
-            for source in sources
-        ]
-        sources, err_sources = split_sources_by_error(await asyncio.gather(*conversion_tasks))
-        sources_with_errors.extend(err_sources)
+        # conversion_tasks = [
+        #     workflow.execute_activity(
+        #         activity="TS_CONVERSION_HTML",
+        #         task_queue="TS_WORKER_TASK_QUEUE",
+        #         args=[source],
+        #         start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
+        #     )
+        #     for source in sources
+        # ]
+        # sources, err_sources = split_sources_by_error(await asyncio.gather(*conversion_tasks))
+        # sources_with_errors.extend(err_sources)
         # COMPLETER ICI - END
 
         # COMPLETER ICI - START (partie 5)
         # Décommenter les lignes suivante
-        sources = await recursive_text_chunking_stage(sources, ingestion_workflow_input.recursive_chunking_config)
-        sources, err_sources = split_sources_by_error(sources)
-        sources_with_errors.extend(err_sources)
+        # sources = await recursive_text_chunking_stage(sources, ingestion_workflow_input.recursive_chunking_config)
+        # sources, err_sources = split_sources_by_error(sources)
+        # sources_with_errors.extend(err_sources)
         # Penser à changer l'activité d'indexing "index_source_no_chunk_activity" par "index_source_with_chunks_activity"
         # COMPLETER ICI - END (partie 5)
 
         # COMPLETER ICI / Décommenter ici - START (partie 2)
         # - Décommenter les lignes suivantes
         # - Compléter l'activitée index_source_no_chunk_activity
-        indexing_tasks = [
-            workflow.execute_activity(
-                activity=index_source_with_chunks_activity,
-                task_queue="PY_WORKER_TASK_QUEUE",
-                args=[source, ingestion_workflow_input.indexing_config], # Ne pas oublier de passer le paramètre supplémentaire ici
-                start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
-            )
-            for source in sources
-        ]
-        sources = await asyncio.gather(*indexing_tasks)  # Exécute toutes les tâches en parallèle sur chaques sources
-        logger.info("Nombre de sources indexés : %i", len(sources))
+        # indexing_tasks = [
+        #     workflow.execute_activity(
+        #         activity=index_source_no_chunk_activity,
+        #         task_queue="PY_WORKER_TASK_QUEUE",
+        #         args=[source, ingestion_workflow_input.indexing_config], # Ne pas oublier de passer le paramètre supplémentaire ici
+        #         start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
+        #     )
+        #     for source in sources
+        # ]
+        # sources = await asyncio.gather(*indexing_tasks)  # Exécute toutes les tâches en parallèle sur chaques sources
+        # logger.info("Nombre de sources indexés : %i", len(sources))
         # COMPLETER ICI - END
 
         return f"Handeled {len(sources)} sources, sources with errors: {len(err_sources)}"

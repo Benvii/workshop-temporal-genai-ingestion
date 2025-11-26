@@ -27,26 +27,6 @@ async def index_source_no_chunk_activity(source: Source, stage_config: IndexingS
     # - avec le contenu comme page_content
     # - en metadata "source" qui vaut source.uri
     # En utilisant le vector_store ajouter le document créé.
-
-    logger.debug("Creating OpenAI embedding using model : %s", stage_config.openai_embedding_model)
-    embedding = OpenAIEmbeddings(model=stage_config.openai_embedding_model)
-    vector_store = PGVector(
-        connection=stage_config.database_uri,
-        collection_name=stage_config.collection_name,
-        embeddings=embedding,
-    )
-
-    with open(source.converted_md_path, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    doc = Document(
-        page_content=content,
-        metadata={
-            "source": source.uri,
-            "title": source.metadata.get("title"),
-        },
-    )
-    vector_store.add_documents([doc])
     # COMPLETER ICI - END
 
     return  source

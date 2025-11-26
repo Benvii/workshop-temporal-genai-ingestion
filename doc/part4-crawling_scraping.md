@@ -51,7 +51,14 @@ from temporalio import activity
 workflow_id = activity.info().workflow_id
 ```
 * Vérifier que la source est bien de type `MimeTypesEnum.text_html`, sinon la marquer en erreur.
-* Vous pouvez utiliser requests pour télécharger en GET les sources.
+* Vous pouvez utiliser requests pour télécharger en GET les sources et passer par le rotating proxy (pour ne pas se faire ban) :
+```python
+from avelbot_ingestion.helpers.rotating_proxy import get_rotating_proxy
+
+resp = requests.get(
+            source.uri,
+            timeout=10, proxies=get_rotating_proxy())
+```
 * Vous pouvez vous aider de TODO fonction utilitaire pour générer un nom normalisé depuis une URI :
 ```python
 from avelbot_ingestion.helpers.url_helpers import url_to_file_name
@@ -59,7 +66,24 @@ from avelbot_ingestion.helpers.url_helpers import url_to_file_name
 url_to_file_name(source.uri)
 ```
 * ⚠ N'oubliez pas toutes nouvelle activité doit être référencée sur un worker 😉
-* TODO Ajouter au workflow l'appel vers cette activité
+* Ajouter au workflow l'appel vers cette activité.
+<details>
+  <summary>Appel scraping dans le workflow</summary>
+
+```python
+scraping_tasks = [
+    workflow.execute_activity(
+        activity=scraping_activity,
+        task_queue="PY_WORKER_TASK_QUEUE",
+        args=[source],
+        start_to_close_timeout=timedelta(seconds=WORKFLOW_ACTIVITY_START_TO_CLOSE_TIMEOUT),
+    )
+    for source in sources
+]
+sources, err_sources = split_sources_by_error(await asyncio.gather(*scraping_tasks))
+sources_with_errors.extend(err_sources)
+```
+</details>
 * Vous pouvez tester à l'aide de la run configuration :
   * PyCharm `Part 4.a - Scraping`
   * VS Code `[🐍] Trigger - Part 4.a - Scraping`
@@ -75,6 +99,7 @@ import os
 from temporalio import activity
 
 from avelbot_ingestion.helpers.logging_config import get_app_logger
+from avelbot_ingestion.helpers.rotating_proxy import get_rotating_proxy
 from avelbot_ingestion.helpers.url_helpers import url_to_file_name
 from avelbot_ingestion.models.MimeTypesEnum import MimeTypesEnum
 from avelbot_ingestion.models.Source import Source
@@ -109,7 +134,9 @@ async def scraping_activity(source: Source) -> Source:
 
     # Download page
     try:
-        resp = requests.get(source.uri, timeout=10)
+        resp = requests.get(
+            source.uri,
+            timeout=10, proxies=get_rotating_proxy())
         resp.raise_for_status()
 
         output_raw_file_path.write_text(resp.text, encoding="utf-8")

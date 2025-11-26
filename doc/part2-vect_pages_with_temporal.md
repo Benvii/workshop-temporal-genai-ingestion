@@ -406,7 +406,7 @@ async def index_source_no_chunk_activity(source: Source, stage_config: IndexingS
         embeddings=embedding,
     )
 
-    with open(source.raw_file_path, "r", encoding="utf-8") as f:
+    with open(source.converted_md_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     doc = Document(
@@ -417,6 +417,7 @@ async def index_source_no_chunk_activity(source: Source, stage_config: IndexingS
         },
     )
     vector_store.add_documents([doc])
+    
     # COMPLETER ICI - END
 
     return  source

@@ -69,20 +69,6 @@ async def recursive_text_chunking_source_activity(source: Source, recursive_chun
     chunks: List[Chunk] = []
 
     # COMPLETER ICI - START (partie 5)
-    async with aiofiles.open(source.converted_md_path, mode="r", encoding="utf-8") as src_file:
-        source_content = await src_file.read()
-
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=recursive_chunking_stage_config.chunk_size,
-        chunk_overlap=recursive_chunking_stage_config.chunk_overlap,
-    )
-    chunks_texts = text_splitter.split_text(source_content)
-
-    for text in chunks_texts:
-        chunks.append(Chunk(text=text, metadata=source.metadata))
-
-    await save_chunks_yaml(chunks, source_chunks_file_path)
-    source.chunking_file_path = str(source_chunks_file_path)
     # COMPLETER ICI - END (partie 5)
 
     # Update de l'état de la source
