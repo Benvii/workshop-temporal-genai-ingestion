@@ -1,0 +1,15 @@
+# Proxy rotation
+# Use configuration files generated using proxy list export from webshare.io
+# Squid configuration generated with : TODO
+
+services:
+  squid-rotator:
+    image: ubuntu/squid
+    ports:
+      - "3128:3128"
+    volumes:
+      # Ton squid.conf custom
+      - ./scripts/squid/etc_squid/squid.conf:/etc/squid/squid.conf:ro
+      # Les peers Webshare générés
+      - ./scripts/squid/etc_squid/squid_peers.conf:/etc/squid/squid_peers.conf:ro
+    restart: unless-stopped

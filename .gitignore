@@ -315,3 +315,6 @@ pyrightconfig.json
 # Temporal Workdir
 /temporal_workdir/*
 !/temporal_workdir/.gitkeep
+
+# Squid conf
+/docker/scripts/squid/etc_squid/squid_peers.conf
