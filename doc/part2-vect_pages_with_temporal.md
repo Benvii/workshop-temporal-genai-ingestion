@@ -202,6 +202,7 @@ worker: Worker = Worker(
   debug_mode=True, # Utile en dev
   workflow_runner=build_sandbox_worker_runner_vscode_debug_compatible() # Used to prevent VS Code issue
 )
+await worker.run()
 ```
 
 > build_sandbox_worker_runner_vscode_debug_compatible permet de créer un context du worker compatible
