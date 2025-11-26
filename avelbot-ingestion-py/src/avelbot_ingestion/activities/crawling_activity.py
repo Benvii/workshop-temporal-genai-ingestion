@@ -3,6 +3,7 @@ from typing import List, Optional
 from temporalio import activity
 
 from avelbot_ingestion.helpers.logging_config import get_app_logger
+from avelbot_ingestion.helpers.rotating_proxy import get_rotating_proxy
 from avelbot_ingestion.models.SourceStatusEnum import SourceStatusEnum
 from avelbot_ingestion.models.MimeTypesEnum import MimeTypesEnum
 from avelbot_ingestion.models.Source import Source
@@ -33,7 +34,7 @@ async def crawling_activity(source: Source, page_size: Optional[int] = None) -> 
 
     try:
         await asyncio.sleep(random.uniform(0, 15)) # Random waiting time to avoid bans
-        response = requests.get(source.uri, timeout=10)
+        response = requests.get(source.uri, timeout=10, proxies=get_rotating_proxy())
         response.raise_for_status()
     except requests.RequestException as e:
         source.error = str(e)

@@ -3,6 +3,7 @@ import os
 from temporalio import activity
 
 from avelbot_ingestion.helpers.logging_config import get_app_logger
+from avelbot_ingestion.helpers.rotating_proxy import get_rotating_proxy
 from avelbot_ingestion.helpers.url_helpers import url_to_file_name
 from avelbot_ingestion.models.MimeTypesEnum import MimeTypesEnum
 from avelbot_ingestion.models.Source import Source
@@ -37,7 +38,9 @@ async def scraping_activity(source: Source) -> Source:
 
     # Download page
     try:
-        resp = requests.get(source.uri, timeout=10)
+        resp = requests.get(
+            source.uri,
+            timeout=10, proxies=get_rotating_proxy())
         resp.raise_for_status()
 
         output_raw_file_path.write_text(resp.text, encoding="utf-8")

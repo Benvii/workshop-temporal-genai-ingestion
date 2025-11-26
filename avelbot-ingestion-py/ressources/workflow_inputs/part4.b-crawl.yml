@@ -6,6 +6,10 @@ indexing_config: # Configuration transmise à l'activité d'indexation
   database_uri: postgresql+psycopg://postgres:ChangeMe@localhost:5432/postgres # Base Postgres utilisée par AvelBot
   openai_embedding_model: text-embedding-3-small # Model d'embedding devant correspondre à celui utilisé par AvelBot
 
+# Sert pour les parties d'après
+recursive_chunking_config: # Introduction des nouveaux paramètres pour le chunking recursif
+  chunk_size: 700
+  chunk_overlap: 100
 
 # Point d'entrée utilisé pour démarrer le crawling
 sources:
