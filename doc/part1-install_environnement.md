@@ -28,10 +28,10 @@
 
 Récap des services et URLs :
 
-| Service | URL                                                                   |
-| --- |-----------------------------------------------------------------------|
-| Avel Bot | http://localhost:8501                                                 |
-| Temporal | http://localhost:8533                                                 |
+| Service | URL                                                                                |
+| --- |------------------------------------------------------------------------------------|
+| Avel Bot | http://localhost:8501                                                              |
+| Temporal | http://localhost:8233                                                              |
 | Langfuse | http://localhost:3000  <br> User : `user@example.com` <br> Password: `password123` |
 
 **Vous devez disposer de docker-compose au préalable.**
