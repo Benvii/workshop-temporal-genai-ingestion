@@ -4,7 +4,7 @@ services:
 
   # Vector Database
   postgres:
-    image: pgvector/pgvector:pg17
+    image: "${DOCKER_REGISTRY}/pgvector/pgvector:pg17"
     ports:
       - 5432:5432
     networks:
